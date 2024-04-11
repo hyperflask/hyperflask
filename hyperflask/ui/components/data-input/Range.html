@@ -1,0 +1,4 @@
+{% macro Range(style=None, size=None) -%}
+    <input type="range" class="range {{kwargs.pop('class', '')}} {% if style %} range-{{style}}{% endif %} {% if size %} range-{{size}}{% endif %}" {{ html_attrs(kwargs) }}>
+    </input>
+{%- endmacro %}

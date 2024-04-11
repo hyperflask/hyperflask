@@ -1,0 +1,6 @@
+{% macro Textarea(bordered=True, ghost=None, style=None, size=None) -%}
+    <textarea class="textarea {{kwargs.pop('class', '')}} {% if bordered %} textarea-bordered{% endif %} {% if ghost %} textarea-ghost{% endif %} {% if style %} textarea-{{style}}{% endif %} {% if size %} textarea-{{size}}{% endif %}" {{ html_attrs(kwargs) }}>
+        {{ caller() }}
+        
+    </textarea>
+{%- endmacro %}

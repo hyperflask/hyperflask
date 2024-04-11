@@ -1,0 +1,16 @@
+
+{% macro Form() -%}
+    {% set inner = caller() %}
+    <{form class__="space-y-5" method=kwargs.pop('method', 'post') **kwargs}>
+        {{form.hidden_tag()}}
+        {{inner}}
+    </{form}>
+{%- endmacro %}
+
+{% macro HxForm(action=None) -%}
+    {% set inner = caller() %}
+    <{Form hx_boost="false" hx_post=(action or request.url)
+           hx_on__after_request=("event.detail.successful && event.target.reset();" + kwargs.pop("hx_on__after_request", "")) **kwargs}>
+        {{inner}}
+    </{Form}>
+{%- endmacro %}

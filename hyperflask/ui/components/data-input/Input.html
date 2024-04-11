@@ -1,0 +1,4 @@
+{% macro Input(bordered=True, ghost=None, style=None, size=None, type="text") -%}
+    <input class="input w-full {{kwargs.pop('class', '')}} {% if bordered %} input-bordered{% endif %} {% if ghost %} input-ghost{% endif %} {% if style %} input-{{style}}{% endif %} {% if size %} input-{{size}}{% endif %}" {% if type %}type="{{type}}"{% endif %} {{ html_attrs(kwargs) }}>
+    </input>
+{%- endmacro %}

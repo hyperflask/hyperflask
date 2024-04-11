@@ -1,0 +1,11 @@
+{% macro LabeledTextInput(slot, bordered=True, ghost=None, style=None, size=None, type="text") -%}
+    <label class="input flex items-center gap-2 {% if bordered %} input-bordered{% endif %} {% if ghost %} input-ghost{% endif %} {% if style %} input-{{style}}{% endif %} {% if size %} input-{{size}}{% endif %}">
+        
+        {{slot}}
+        
+        
+        <input {% if type %}{{type}}{% else %} text{% endif %} class="grow {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        </input>
+        
+    </label>
+{%- endmacro %}

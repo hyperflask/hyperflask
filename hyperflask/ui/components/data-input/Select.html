@@ -1,0 +1,11 @@
+{% macro Select(bordered=True, style=None, size=None, ghost=None, placeholder=None) -%}
+    <select class="select w-full max-w-xs {{kwargs.pop('class', '')}} {% if bordered %} select-bordered{% endif %} {% if style %} select-{{style}}{% endif %} {% if size %} select-{{size}}{% endif %} {% if ghost %} select-ghost{% endif %}" {{ html_attrs(kwargs) }}>
+        
+        {% if not placeholder %}{% else %}<option disabled="" selected="">{% if placeholder %}{{placeholder}}{% else %}
+        {% endif %}</option>{% endif %}
+        
+        {{ caller() }}
+        
+        
+    </select>
+{%- endmacro %}

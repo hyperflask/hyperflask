@@ -1,0 +1,11 @@
+{% macro Indicator(value=None, style="neutral", size=None, outline=None, position=None) -%}
+    <div class="indicator">
+        
+        <span class="indicator-item badge {% if style %} badge-{{style}}{% endif %} {% if size %} badge-{{size}}{% endif %} {% if outline %} badge-outline{% endif %} {% if position %} indicator-{{position}}{% endif %}">{% if value %}{{value}}{% else %}
+        {% endif %}</span>
+        
+        {{ caller() }}
+        
+        
+    </div>
+{%- endmacro %}

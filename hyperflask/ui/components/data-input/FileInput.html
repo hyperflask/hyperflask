@@ -1,0 +1,4 @@
+{% macro FileInput(bordered=None, style=None, size=None) -%}
+    <input type="file" class="file-input w-full max-w-xs {{kwargs.pop('class', '')}} {% if bordered %} file-input-bordered{% endif %} {% if style %} file-input-{{style}}{% endif %} {% if size %} file-input-{{size}}{% endif %}" {{ html_attrs(kwargs) }}>
+    </input>
+{%- endmacro %}

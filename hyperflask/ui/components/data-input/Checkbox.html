@@ -1,0 +1,4 @@
+{% macro Checkbox(style=None, size=None) -%}
+    <input type="checkbox" class="checkbox {{kwargs.pop('class', '')}} {% if style %} checkbox-{{style}}{% endif %} {% if size %} checkbox-{{size}}{% endif %}" {{ html_attrs(kwargs) }}>
+    </input>
+{%- endmacro %}

@@ -1,0 +1,6 @@
+{% macro FooterLink() -%}
+    <a class="link link-hover {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        {{ caller() }}
+        
+    </a>
+{%- endmacro %}

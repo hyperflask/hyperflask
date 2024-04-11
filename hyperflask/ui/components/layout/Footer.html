@@ -1,0 +1,8 @@
+{% macro Footer(center=None, rows=None) -%}
+    <footer class="footer bg-neutral text-neutral-content p-10 {% if center %} footer-center{% endif %} {% if rows %} grid-rows-{{rows}}{% endif %}">
+        
+        {{ caller() }}
+        
+        
+    </footer>
+{%- endmacro %}

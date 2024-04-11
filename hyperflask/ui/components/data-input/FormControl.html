@@ -1,0 +1,15 @@
+{% macro FormControl(label=None) -%}
+    <div class="form-control w-full {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <div class="label">
+            
+            <span class="label-text">{% if label %}{{label}}{% else %}
+            {% endif %}</span>
+            
+        </div>
+        
+        {{ caller() }}
+        
+        
+    </div>
+{%- endmacro %}

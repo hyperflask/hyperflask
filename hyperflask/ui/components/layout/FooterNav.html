@@ -1,0 +1,11 @@
+{% macro FooterNav(title=None) -%}
+    <nav class="{{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {% if not title %}{% else %}<h6 class="footer-title">{% if title %}{{title}}{% else %}
+        {% endif %}</h6>{% endif %}
+        
+        {{ caller() }}
+        
+        
+    </nav>
+{%- endmacro %}

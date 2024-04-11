@@ -1,0 +1,21 @@
+{% macro Navbar(title, title_href=None, style=None) -%}
+    <div class="navbar bg-base-100 {{kwargs.pop('class', '')}} {% if style %} bg-{{style}} text-{{style}}-content{% endif %}" {{ html_attrs(kwargs) }}>
+        
+        <div class="flex-1">
+            
+            <a class="btn btn-ghost text-xl" {% if title_href %}href="{{title_href}}"{% endif %}>
+                {{title}}
+                
+            </a>
+            
+        </div>
+        
+        <div class="flex-none gap-2">
+            
+            {{ caller() }}
+            
+            
+        </div>
+        
+    </div>
+{%- endmacro %}

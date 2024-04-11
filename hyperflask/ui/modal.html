@@ -1,0 +1,7 @@
+
+{% macro AutoOpenModal() -%}
+  {%- set inner = caller() -%}
+  <{Modal x_init="$el.showModal()" **kwargs }>
+    {{inner}}
+  </{}>
+{%- endmacro %}

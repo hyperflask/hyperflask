@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="{{config.get("SITE_LANG", "en")}}" {% block html_tag_attrs %}{% endblock %}>
+    <head>
+        {% block head -%}
+        {% block head_metas %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% endblock %}
+        {% if config["PWA"] -%}
+        <link rel="manifest" href="{{url_for("pwa_manifest")}}" />
+        {%- endif %}
+        {% block page_title %}<title>{% if page_title is defined %}{{ page_title }}{% if config.get("SITE_TITLE") %} | {% endif %}{% endif %}{% if config.get("SITE_TITLE") %}{{config["SITE_TITLE"]}}{% endif %}</title>{% endblock %}
+        {% asset_tags %}
+        {% block head_assets %}{% endblock %}
+        {%- endblock %}
+    </head>
+    {% block body_tag -%}
+    <body
+        {% if config["HTMX_BOOST_SITE"] %}hx-boost="true"{% endif %}
+        {% if config["PWA"] %}hx-ext="pwa" pwa-service-worker="{{url_for('pwa_service_worker')}}"{% endif %}
+        {% block body_tag_attrs %}{% endblock %}
+    >
+    {%- endblock %}
+        {% block body %}{% block content %}{% endblock %}{% endblock %}
+        {% block footer %}{% endblock %}
+        {% block body_end %}{% endblock %}
+    </body>
+</html>

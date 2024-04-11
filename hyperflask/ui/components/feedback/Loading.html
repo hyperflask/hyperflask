@@ -1,0 +1,4 @@
+{% macro Loading(style="spinner", size="md") -%}
+    <span class="loading {% if style %} loading-{{style}}{% endif %} {% if size %} loading-{{size}}{% endif %}">
+    </span>
+{%- endmacro %}

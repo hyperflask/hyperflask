@@ -1,0 +1,4 @@
+{% macro Toggle(style=None, size=None) -%}
+    <input type="checkbox" class="toggle {{kwargs.pop('class', '')}} {% if style %} toggle-{{style}}{% endif %} {% if size %} toggle-{{size}}{% endif %}" {{ html_attrs(kwargs) }}>
+    </input>
+{%- endmacro %}

@@ -1,0 +1,6 @@
+{% macro Link(style=None) -%}
+    <a class="link {{kwargs.pop('class', '')}} {% if style %} link-{{style}}{% endif %}" {{ html_attrs(kwargs) }}>
+        {{ caller() }}
+        
+    </a>
+{%- endmacro %}

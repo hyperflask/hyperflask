@@ -1,0 +1,28 @@
+{% macro Modal(close_btn=None, open=None, position=None, responsive=True, width=None, large=None, no_blur=None) -%}
+    <dialog class="modal {{kwargs.pop('class', '')}} {% if close_btn %}  {% endif %} {% if open %} modal-open{% endif %} {% if position %} modal-{{position}}{% endif %} {% if responsive %} modal-bottom sm:modal-middle{% endif %}" {{ html_attrs(kwargs) }}>
+        
+        <div class="modal-box {% if width %} {{width}}{% endif %} {% if large %} w-11/12 max-w-full{% endif %}">
+            
+            {% if not close_btn %}{% else %}<form method="dialog">
+                
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                    ✕
+                </button>
+                
+            </form>{% endif %}
+            
+            {{ caller() }}
+            
+            
+        </div>
+        
+        {% if no_blur %}{% else %}<form method="dialog" class="modal-backdrop">
+            
+            <button >
+                close
+            </button>
+            
+        </form>{% endif %}
+        
+    </dialog>
+{%- endmacro %}

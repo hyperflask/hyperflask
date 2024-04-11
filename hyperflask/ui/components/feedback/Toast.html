@@ -1,0 +1,8 @@
+{% macro Toast(x=None, y=None) -%}
+    <div class="toast {% if x %} toast-{{x}}{% endif %} {% if y %} toast-{{y}}{% endif %}">
+        
+        {{ caller() }}
+        
+        
+    </div>
+{%- endmacro %}

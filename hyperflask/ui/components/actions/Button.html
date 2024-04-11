@@ -1,0 +1,6 @@
+{% macro Button(style=None, active=None, outline=None, size=None, wide=None, glass=None) -%}
+    <button class="btn {{kwargs.pop('class', '')}} {% if style %} btn-{{style}}{% endif %} {% if active %} btn-active{% endif %} {% if outline %} btn-outline{% endif %} {% if size %} btn-{{size}}{% endif %} {% if wide %} btn-wide{% endif %} {% if glass %} glass{% endif %}" {{ html_attrs(kwargs) }}>
+        {{ caller() }}
+        
+    </button>
+{%- endmacro %}

@@ -1,0 +1,5 @@
+
+{% macro Icon(name) -%}
+  {{ include_asset("static bootstrap-icons/bootstrap-icons.min.css") }}
+  <i {{html_attrs(class__="bi-"+name, **kwargs)}}></i>
+{%- endmacro %}

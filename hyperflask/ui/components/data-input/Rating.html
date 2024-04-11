@@ -1,0 +1,20 @@
+{% macro Rating(name=None, rating=None, mask="star", size=None) -%}
+    <div class="rating {% if size %} rating-{{size}}{% endif %}">
+        
+        <input type="radio" class="mask {% if mask %} mask-{{mask}}{% endif %}" value="1" {% if name %}name="{{name}}"{% endif %} {% if rating > 0 %}checked="checked"{% endif %}>
+        </input>
+        
+        <input type="radio" class="mask {% if mask %} mask-{{mask}}{% endif %}" value="2" {% if name %}name="{{name}}"{% endif %} {% if rating > 1 %}checked="checked"{% endif %}>
+        </input>
+        
+        <input type="radio" class="mask {% if mask %} mask-{{mask}}{% endif %}" value="3" {% if name %}name="{{name}}"{% endif %} {% if rating > 2 %}checked="checked"{% endif %}>
+        </input>
+        
+        <input type="radio" class="mask {% if mask %} mask-{{mask}}{% endif %}" value="4" {% if name %}name="{{name}}"{% endif %} {% if rating > 3 %}checked="checked"{% endif %}>
+        </input>
+        
+        <input type="radio" class="mask {% if mask %} mask-{{mask}}{% endif %}" value="5" {% if name %}name="{{name}}"{% endif %} {% if rating > 4 %}checked="checked"{% endif %}>
+        </input>
+        
+    </div>
+{%- endmacro %}
