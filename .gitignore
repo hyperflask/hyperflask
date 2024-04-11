@@ -1,0 +1,7 @@
+dist
+.venv
+*.pyc
+__pycache__
+.coverage
+node_modules
+poetry.lock
