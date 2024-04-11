@@ -1,0 +1,24 @@
+
+{% macro Form() -%}
+    {% set inner = caller() %}
+    <{form **kwargs}>
+        {{form.hidden_tag()}}
+        {{inner}}
+    </{form}>
+{%- endmacro %}
+
+{% macro HxForm(action=None) -%}
+    {% set inner = caller() %}
+    <{Form hx_boost="false" hx_post=(action or request.url)
+           hx_on__after_request=("event.detail.successful && event.target.reset();" + kwargs.pop("hx_on__after_request", "")) **kwargs}>
+        {{inner}}
+    </{Form}>
+{%- endmacro %}
+
+{% macro FormField(field) -%}
+    {{field}}
+{%- endmacro %}
+
+{% macro SubmitButton() -%}
+    <button type="submit">{{caller()}}</button>
+{%- endmacro %}
