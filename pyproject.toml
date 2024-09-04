@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hyperflask"
-version = "0.1.3"
+version = "0.1.4"
 description = "Full stack web framework"
 authors = ["Maxime Bouroumeau-Fuseau <maxime.bouroumeau@gmail.com>"]
 readme = "README.md"

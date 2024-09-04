@@ -1,0 +1,80 @@
+<mjml>
+    <mj-head>
+      {% block head %}
+      <mj-title>{% block head_title %}{{config.get("SITE_TITLE", "")}}{% endblock %}</mj-title>
+      <mj-preview>Pre-header Text</mj-preview>
+      <mj-attributes>
+        <mj-all font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"></mj-all>
+        <mj-text font-weight="400" font-size="16px" color="#000000" line-height="24px" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"></mj-text>
+      </mj-attributes>
+      <mj-style inline="inline">
+        .body-section {
+        -webkit-box-shadow: 1px 4px 11px 0px rgba(0, 0, 0, 0.15);
+        -moz-box-shadow: 1px 4px 11px 0px rgba(0, 0, 0, 0.15);
+        box-shadow: 1px 4px 11px 0px rgba(0, 0, 0, 0.15);
+        }
+      </mj-style>
+      <mj-style inline="inline">
+        .footer-link {
+        color: #4d4d4d
+        }
+      </mj-style>
+      {% endblock %}
+    </mj-head>
+    <mj-body {% block body_tags %}background-color="{{config.get("EMAIL_BACKGROUND_COLOR", "#c8c8c8")}}" width="600px"{% endblock %}>
+      <mj-section full-width="full-width" background-color="{{config.get("EMAIL_BACKGROUND_ACCENT_COLOR", "#a6a6a6")}}" padding-bottom="0">
+        <mj-column width="100%">
+          <mj-text color="#4d4d4d" font-weight="bold" align="center" font-size="16px" letter-spacing="1px">
+            {% block brand %}
+              {{config.get("SITE_TITLE", "")}}
+            {% endblock %}
+          </mj-text>
+          <mj-wrapper padding="0">
+            <mj-section background-color="#fff">
+              <mj-column width="100%" padding-left="15px" padding-right="15px">
+                <mj-text color="#2d2d2d" font-weight="bold" font-size="20px">
+                  {% block title %}
+                    {% if title is defined %}{{ title }}{% endif %}
+                  {% endblock %}
+                </mj-text>
+              </mj-column>
+            </mj-section>
+          </mj-wrapper>
+        </mj-column>
+      </mj-section>
+      <mj-wrapper padding-top="0" padding-bottom="0" css-class="body-section">
+        {% block body %}
+        <mj-section background-color="#ffffff" padding-left="15px" padding-right="15px">
+          <mj-column width="100%">
+            {% block content %}{% endblock %}
+          </mj-column>
+        </mj-section>
+        {% endblock %}
+      </mj-wrapper>
+
+      <mj-wrapper full-width="full-width">
+        {% block footer %}
+        <mj-section>
+          <mj-column width="100%" padding="0">
+            {% block footer_content %}
+            <mj-text color="#4d4d4d" font-size="11px" align="center" line-height="16px">
+              You are receiving this email because you have agreed to receive emails from us.
+            </mj-text>
+            {% endblock %}
+          </mj-column>
+        </mj-section>
+        <mj-section padding-top="0">
+          <mj-group>
+            <mj-column width="100%" padding-right="0">
+              <mj-text color="#4d4d4d" font-size="11px" align="center" line-height="16px" font-weight="bold">
+                {% block footer_links %}
+                <a class="footer-link" href="{{url_for('index', _external=True)}}">Go to site</a>
+                {% endblock %}
+              </mj-text>
+            </mj-column>
+          </mj-group>
+        </mj-section>
+        {% endblock %}
+      </mj-wrapper>
+    </mj-body>
+  </mjml>

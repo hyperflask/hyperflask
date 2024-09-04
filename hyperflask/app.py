@@ -1,6 +1,7 @@
 # flask
 from flask import Flask
 from jinja2 import ChoiceLoader, FileSystemLoader, PrefixLoader
+from werkzeug.middleware.proxy_fix import ProxyFix
 # hyperflask extensions
 from jinja_layout import LayoutExtension
 from jinja_wtforms import WtformExtension
@@ -54,7 +55,9 @@ class Hyperflask(Flask):
     def __init__(self, *args, static_mode="hybrid", instrument=False, layouts_folder="layouts", partials_folder="partials",
                  emails_folder="emails", forms_folder="forms", assets_folder="assets", pages_folder="pages", migrations_folder="migrations",
                  config=None, config_filename="config.yml", **kwargs):
+
         super().__init__(*args, **kwargs)
+        self.wsgi_app = ProxyFix(self.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
         self.config.update({
             "FREEZER_DESTINATION": os.path.join(self.root_path, "_site"),
@@ -91,8 +94,8 @@ class Hyperflask(Flask):
             self.jinja_env.loader.loaders.append(layout_loader)
             self.jinja_env.loader.loaders.append(PrefixLoader({os.path.basename(layouts_folder): layout_loader}))
         self.jinja_env.loader.loaders.extend([
-            FileLoader(os.path.join(os.path.dirname(__file__), "layout.html")),
-            FileLoader(os.path.join(os.path.dirname(__file__), "layout.html"), "hyperflask_layout.html"),
+            FileLoader(os.path.join(os.path.dirname(__file__), "layouts/web.html"), "layout.html"),
+            FileLoader(os.path.join(os.path.dirname(__file__), "layouts/web.html"), "hyperflask_layout.html"),
             PrefixLoader({"ui": FileSystemLoader(os.path.join(os.path.dirname(__file__), "ui"))})
         ])
 
@@ -147,6 +150,13 @@ class Hyperflask(Flask):
             assets_folder=os.path.join(os.path.dirname(__file__), "static")
         )
         self.assets.include("@hyperflask", 0)
+
+        self.extensions['mail_templates'].jinja_env.add_extension(LayoutExtension)
+        self.extensions['mail_templates'].jinja_env.default_layout = "layout.mjml"
+        self.extensions['mail_templates'].loaders.extend([
+            FileLoader(os.path.join(os.path.dirname(__file__), 'layouts/email.mjml'), 'layout.mjml'),
+            FileLoader(os.path.join(os.path.dirname(__file__), 'layouts/email.mjml'), 'hyperflask_layout.mjml')
+        ])
 
         self.macros.register_from_directory(os.path.join(os.path.dirname(__file__), "ui"))
         if hasattr(file_routes, "loader"):
