@@ -1,0 +1,27 @@
+
+.htmx-indicator {
+  display:none;
+}
+.htmx-indicator-visible {
+  visibility: hidden;
+}
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+  display: block;
+}
+.htmx-request .htmx-indicator-inline,
+.htmx-request.htmx-indicator-inline {
+  display: inline;
+}
+.htmx-request .htmx-indicator-visible,
+.htmx-request.htmx-indicator-visible {
+  visibility: visible;
+}
+.htmx-request .htmx-indicator-hidden,
+.htmx-request.htmx-indicator-hidden {
+  display: none;
+}
+.htmx-request .htmx-indicator-invisible,
+.htmx-request.htmx-indicator-invisible {
+  visibility: hidden;
+}

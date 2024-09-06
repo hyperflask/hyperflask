@@ -144,7 +144,7 @@ class Hyperflask(Flask):
             "bootstrap-icons/font": "bootstrap-icons"
         })
         self.assets.bundle(
-            {"@hyperflask": ["app.js"],
+            {"@hyperflask": ["app.js", "app.css"],
              "@hyperflask/reactive": ["reactive.js"],
              "@hyperflask/alpine": ["alpine.js"]},
             assets_folder=os.path.join(os.path.dirname(__file__), "static")
