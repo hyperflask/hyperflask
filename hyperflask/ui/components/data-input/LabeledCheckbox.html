@@ -1,7 +1,7 @@
 {% macro LabeledCheckbox(label, style=None, size=None) -%}
-    <label class="label cursor-pointer justify-start gap-2 {{kwargs.pop('class', '')}} {% if style %} checkbox-{{style}}{% endif %} {% if size %} checkbox-{{size}}{% endif %}" {{ html_attrs(kwargs) }}>
+    <label class="label cursor-pointer justify-start gap-2 {% if style %} checkbox-{{style}}{% endif %} {% if size %} checkbox-{{size}}{% endif %}">
         
-        <input type="checkbox" class="checkbox">
+        <input type="checkbox" class="checkbox {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
         </input>
         
         <span class="label-text">{{label}}
