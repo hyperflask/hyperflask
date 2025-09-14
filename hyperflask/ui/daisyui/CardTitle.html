@@ -1,0 +1,6 @@
+{% macro CardTitle() -%}
+    <h2 class="card-title  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </h2>
+{%- endmacro %}

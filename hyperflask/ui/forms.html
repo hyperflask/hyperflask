@@ -1,16 +1,35 @@
 
-{% macro Form() -%}
+{% macro Form(form=None, fieldset=True) -%}
     {% set inner = caller() %}
-    <{form class__="space-y-5" method=kwargs.pop('method', 'post') **kwargs}>
-        {{form.hidden_tag()}}
+    <{form method=kwargs.pop('method', 'POST') **kwargs}>
+        {% if form %}{{form.hidden_tag()}}{% endif %}
+        {% if fieldset %}<fieldset class="fieldset">{% endif %}
         {{inner}}
+        {% if fieldset %}</fieldset>{% endif %}
     </{form}>
 {%- endmacro %}
 
-{% macro HxForm(action=None) -%}
+{% macro HxForm(form=None, action=None) -%}
     {% set inner = caller() %}
-    <{Form hx_boost="false" hx_post=(action or request.url)
+    <{Form form hx_boost="false" hx_post=(action or request.url)
            hx_on__after_request=("event.detail.successful && event.target.reset();" + kwargs.pop("hx_on__after_request", "")) **kwargs}>
         {{inner}}
     </{Form}>
 {%- endmacro %}
+
+{% macro ModalForm(form=None) -%}
+    {% set inner = caller() %}
+    <{HxForm form hf_modal_form=True **kwargs}>
+        {{inner}}
+    </{HxForm}>
+{%- endmacro %}
+
+{% macro FormField(field=None, label=None) -%}
+  <{Label}>{{label or field.label}}</{Label}>
+  {{field if field else caller()}}
+{%- endmacro %}
+
+{% macro SubmitButton() %}
+    {% set inner = caller() %}
+    <{Button type="submit" color="primary" **kwargs}>{{inner}}</{Button}>
+{% endmacro %}

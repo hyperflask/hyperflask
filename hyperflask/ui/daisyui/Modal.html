@@ -1,0 +1,28 @@
+{% macro Modal(close_btn=False, open=False, position_x=None, position_y=None, responsive=True, width=None, large=False, no_blur=False) -%}
+    <dialog class="modal {% if close_btn %}  {% endif %} {% if open %} modal-open{% endif %} {% if position_x == "start" %} modal-start{% endif %} {% if position_x == "end" %} modal-end{% endif %} {% if position_y == "top" %} modal-top{% endif %} {% if position_y == "middle" %} modal-middle{% endif %} {% if position_y == "bottom" %} modal-bottom{% endif %} {% if responsive %} modal-bottom sm:modal-middle{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <div class="modal-box {% if width %} {{width}}{% endif %} {% if large %} w-11/12 max-w-full{% endif %}">
+            
+            {% if not close_btn %}{% else %}<form method="dialog">
+                
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                    ✕
+                </button>
+                
+            </form>{% endif %}
+            
+            {{ caller() if caller else "" }}
+            
+            
+        </div>
+        
+        {% if no_blur %}{% else %}<form method="dialog" class="modal-backdrop">
+            
+            <button >
+                close
+            </button>
+            
+        </form>{% endif %}
+        
+    </dialog>
+{%- endmacro %}

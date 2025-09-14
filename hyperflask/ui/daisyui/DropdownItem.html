@@ -1,0 +1,8 @@
+{% macro DropdownItem() -%}
+    <li >
+        <a class="{{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+            {{ caller() if caller else "" }}
+            
+        </a>
+    </li>
+{%- endmacro %}

@@ -1,0 +1,6 @@
+{% macro Label() -%}
+    <label class="label  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </label>
+{%- endmacro %}

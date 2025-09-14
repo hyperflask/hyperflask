@@ -1,0 +1,6 @@
+{% macro Divider(horizontal=False, responsive=None, color=None, text_placement=None) -%}
+    <div class="divider {% if horizontal %} divider-horizontal{% endif %} {% if responsive == "xs" %} xs:divider-horizontal{% endif %} {% if responsive == "sm" %} sm:divider-horizontal{% endif %} {% if responsive == "md" %} md:divider-horizontal{% endif %} {% if responsive == "lg" %} lg:divider-horizontal{% endif %} {% if responsive == "xl" %} xl:divider-horizontal{% endif %} {% if color == "primary" %} divider-primary{% endif %} {% if color == "secondary" %} divider-secondary{% endif %} {% if color == "accent" %} divider-accent{% endif %} {% if color == "neutral" %} divider-neutral{% endif %} {% if color == "success" %} divider-success{% endif %} {% if color == "warning" %} divider-warning{% endif %} {% if color == "info" %} divider-info{% endif %} {% if color == "error" %} divider-error{% endif %} {% if text_placement == "start" %} divider-start{% endif %} {% if text_placement == "end" %} divider-end{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </div>
+{%- endmacro %}

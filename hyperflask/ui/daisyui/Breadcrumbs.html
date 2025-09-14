@@ -1,0 +1,12 @@
+{% macro Breadcrumbs() -%}
+    <div class="breadcrumbs text-sm  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <ul >
+            
+            {{ caller() if caller else "" }}
+            
+            
+        </ul>
+        
+    </div>
+{%- endmacro %}

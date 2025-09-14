@@ -1,0 +1,6 @@
+
+{% macro MercureStream(topic, private=True, hx_swap="beforeend") -%}
+<div hx-ext="sse" sse-connect="{{mercure_authentified_hub_url(topic) if private else mercure_hub_url(topic)}}" hx-swap="{{hx_swap}}" {{html_attrs(**kwargs)}}>
+    {{ caller() }}
+</div>
+{%- endmacro %}

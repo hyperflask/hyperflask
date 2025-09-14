@@ -1,0 +1,6 @@
+{% macro Table(zebra=False, pin_rows=False, pin_cols=False, size=None) -%}
+    <table class="table {% if zebra %} table-zebra{% endif %} {% if pin_rows %} table-pin-rows{% endif %} {% if pin_cols %} table-pin-cols{% endif %} {% if size == "xs" %} table-xs{% endif %} {% if size == "sm" %} table-sm{% endif %} {% if size == "md" %} table-md{% endif %} {% if size == "lg" %} table-lg{% endif %} {% if size == "xl" %} table-xl{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </table>
+{%- endmacro %}

@@ -1,0 +1,8 @@
+{% macro List() -%}
+    <ul class="list bg-base-100 rounded-box shadow-sm  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </ul>
+{%- endmacro %}

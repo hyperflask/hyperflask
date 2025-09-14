@@ -1,0 +1,12 @@
+{% macro ModalAction() -%}
+    <div class="modal-action  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <form method="dialog">
+            
+            {{ caller() if caller else "" }}
+            
+            
+        </form>
+        
+    </div>
+{%- endmacro %}

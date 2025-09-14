@@ -1,0 +1,8 @@
+{% macro Stack(align=None) -%}
+    <div class="stack {% if align == "top" %} stack-top{% endif %} {% if align == "bottom" %} stack-bottom{% endif %} {% if align == "start" %} stack-start{% endif %} {% if align == "end" %} stack-end{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </div>
+{%- endmacro %}

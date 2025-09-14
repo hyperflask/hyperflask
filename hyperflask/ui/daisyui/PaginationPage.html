@@ -1,0 +1,6 @@
+{% macro PaginationPage(active=False) -%}
+    <a class="join-item btn {% if active %} btn-active{% endif %}  {{kwargs.pop('class', '')}}" role="button" {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </a>
+{%- endmacro %}

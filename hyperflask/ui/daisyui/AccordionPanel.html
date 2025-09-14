@@ -1,0 +1,17 @@
+{% macro AccordionPanel(title=None, open=False, toggle_icon=None, name="accordion1") -%}
+    <div class="collapse bg-base-100 border border-base-300 {% if toggle_icon %} collapse-{{toggle_icon}}{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <input type="radio" {% if open %}checked="checked"{% endif %} {% if name %}name="{{name}}"{% endif %}>
+        
+        <div class="collapse-title font-semibold">
+            {{title}}
+            
+        </div>
+        
+        <div class="collapse-content">
+            {{ caller() if caller else "" }}
+            
+        </div>
+        
+    </div>
+{%- endmacro %}

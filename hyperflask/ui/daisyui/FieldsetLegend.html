@@ -1,0 +1,6 @@
+{% macro FieldsetLegend() -%}
+    <legend class="fieldset-legend  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </legend>
+{%- endmacro %}

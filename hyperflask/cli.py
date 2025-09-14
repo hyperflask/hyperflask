@@ -14,7 +14,6 @@ def _create_app():
     try:
         return info.load_app()
     except NoAppException:
-        raise
         return create_app()
 
 

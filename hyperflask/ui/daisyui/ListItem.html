@@ -1,0 +1,8 @@
+{% macro ListItem() -%}
+    <li class="list-row  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </li>
+{%- endmacro %}

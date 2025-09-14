@@ -1,0 +1,8 @@
+{% macro Fieldset() -%}
+    <fieldset class="fieldset  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </fieldset>
+{%- endmacro %}

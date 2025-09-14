@@ -1,0 +1,12 @@
+{% macro Select(color=None, size=None, ghost=False, placeholder=None, join=False, validator=False, validator_hint=None) -%}
+    <select class="select {% if color == "primary" %} select-primary{% endif %} {% if color == "secondary" %} select-secondary{% endif %} {% if color == "accent" %} select-accent{% endif %} {% if color == "neutral" %} select-neutral{% endif %} {% if color == "success" %} select-success{% endif %} {% if color == "warning" %} select-warning{% endif %} {% if color == "info" %} select-info{% endif %} {% if color == "error" %} select-error{% endif %} {% if size == "xs" %} select-xs{% endif %} {% if size == "sm" %} select-sm{% endif %} {% if size == "md" %} select-md{% endif %} {% if size == "lg" %} select-lg{% endif %} {% if size == "xl" %} select-xl{% endif %} {% if ghost %} select-ghost{% endif %} {% if join %} join-item{% endif %} {% if validator %} validator{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {% if not placeholder %}{% else %}<option disabled="" selected="">
+        {% if placeholder %}{{placeholder}}{% else %}
+        {% endif %}</option>{% endif %}
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </select>
+{%- endmacro %}

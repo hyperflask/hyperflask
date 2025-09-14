@@ -1,0 +1,8 @@
+{% macro Tooltip(label, placement=None, open=False, color=None) -%}
+    <div class="tooltip {% if placement == "top" %} tooltip-top{% endif %} {% if placement == "bottom" %} tooltip-bottom{% endif %} {% if placement == "left" %} tooltip-left{% endif %} {% if placement == "right" %} tooltip-right{% endif %} {% if open %} tooltip-open{% endif %} {% if color == "primary" %} tooltip-primary{% endif %} {% if color == "secondary" %} tooltip-secondary{% endif %} {% if color == "accent" %} tooltip-accent{% endif %} {% if color == "neutral" %} tooltip-neutral{% endif %} {% if color == "success" %} tooltip-success{% endif %} {% if color == "warning" %} tooltip-warning{% endif %} {% if color == "info" %} tooltip-info{% endif %} {% if color == "error" %} tooltip-error{% endif %}  {{kwargs.pop('class', '')}}" data-tip="{{label}}" {{ html_attrs(kwargs) }}>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </div>
+{%- endmacro %}

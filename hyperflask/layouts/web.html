@@ -16,13 +16,18 @@
     </head>
     {% block body_tag -%}
     <body
+        {% if config["HTMX_EXT"] %}hx-ext="{{ ','.join(config['HTMX_EXT']) }}"{% endif %}
         {% if config["HTMX_BOOST_SITE"] %}hx-boost="true"{% endif %}
-        {% if config["PWA"] %}hx-ext="pwa" pwa-service-worker="{{url_for('pwa_service_worker')}}"{% endif %}
         {% block body_tag_attrs %}{% endblock %}
     >
     {%- endblock %}
         {% block body %}{% block content %}{% endblock %}{% endblock %}
         {% block footer %}{% endblock %}
+        {% block flash_messages %}
+          {% autoescape false %} {# Jinja bug #}
+            <{FlashMessages}/>
+          {% endautoescape %}
+        {% endblock %}
         {% block body_end %}{% endblock %}
     </body>
 </html>

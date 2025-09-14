@@ -1,0 +1,11 @@
+{% macro DrawerSide(id="drawer1") -%}
+    <div class="drawer-side  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <label aria-label="close sidebar" class="drawer-overlay" {% if id %}for="{{id}}"{% endif %}>
+        </label>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </div>
+{%- endmacro %}

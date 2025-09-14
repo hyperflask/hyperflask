@@ -1,0 +1,8 @@
+
+{% macro FlashMessages() -%}
+  <{Toast id="flash-messages"}>
+    {% for category, message in get_flashed_messages(True) %}
+      <{Alert color=category}>{{message}}</{Alert}>
+    {% endfor %}
+  </{Toast}>
+{%- endmacro %}

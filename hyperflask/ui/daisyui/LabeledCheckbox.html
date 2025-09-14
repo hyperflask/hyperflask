@@ -1,0 +1,10 @@
+{% macro LabeledCheckbox(style=None, size=None) -%}
+    <label class="label {% if style == "primary" %} checkbox-primary{% endif %} {% if style == "secondary" %} checkbox-secondary{% endif %} {% if style == "accent" %} checkbox-accent{% endif %} {% if style == "neutral" %} checkbox-neutral{% endif %} {% if style == "success" %} checkbox-success{% endif %} {% if style == "warning" %} checkbox-warning{% endif %} {% if style == "info" %} checkbox-info{% endif %} {% if style == "error" %} checkbox-error{% endif %} {% if size == "xs" %} checkbox-xs{% endif %} {% if size == "sm" %} checkbox-sm{% endif %} {% if size == "md" %} checkbox-md{% endif %} {% if size == "lg" %} checkbox-lg{% endif %} {% if size == "xl" %} checkbox-xl{% endif %}">
+        
+        <input type="checkbox" class="checkbox  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </label>
+{%- endmacro %}

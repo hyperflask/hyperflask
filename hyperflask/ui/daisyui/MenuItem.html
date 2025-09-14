@@ -1,0 +1,8 @@
+{% macro MenuItem(active=False, tooltip=None, disabled=False) -%}
+    <li class="{% if disabled %}menu-disabled{% endif %}">
+        <a class="{{kwargs.pop('class', '')}} {% if active %} menu-active{% endif %} {% if tooltip %} tooltip{% endif %}" {% if tooltip %}data-tip="{{tooltip}}"{% endif %} {{ html_attrs(kwargs) }}>
+            {{ caller() if caller else "" }}
+            
+        </a>
+    </li>
+{%- endmacro %}

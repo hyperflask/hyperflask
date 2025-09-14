@@ -58,7 +58,7 @@
           <mj-column width="100%" padding="0">
             {% block footer_content %}
             <mj-text color="#4d4d4d" font-size="11px" align="center" line-height="16px">
-              You are receiving this email because you have agreed to receive emails from us.
+              {{_("You are receiving this email because you have agreed to receive emails from us.")}}
             </mj-text>
             {% endblock %}
           </mj-column>

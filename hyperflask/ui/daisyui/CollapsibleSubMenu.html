@@ -1,0 +1,21 @@
+{% macro CollapsibleSubMenu(label, open=False) -%}
+    <li {% if open %}open{% endif %} class="{{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <details >
+            
+            <summary >
+                {{label}}
+                
+            </summary>
+            
+            <ul >
+                
+                {{ caller() if caller else "" }}
+                
+                
+            </ul>
+            
+        </details>
+        
+    </li>
+{%- endmacro %}

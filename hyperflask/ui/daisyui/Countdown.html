@@ -1,0 +1,9 @@
+{% macro Countdown(value=None) -%}
+    <span class="countdown  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <span aria-live="polite" style="{% if value %}--value: {{value}}{% endif %}" {% if value %}aria-label="{{value}}"{% endif %}>
+        {% if value %}{{value}}{% else %}
+        {% endif %}</span>
+        
+    </span>
+{%- endmacro %}

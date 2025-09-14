@@ -1,0 +1,10 @@
+{% macro LabeledToggle(color=None, size=None) -%}
+    <label class="label {% if color == "primary" %} toggle-primary{% endif %} {% if color == "secondary" %} toggle-secondary{% endif %} {% if color == "accent" %} toggle-accent{% endif %} {% if color == "neutral" %} toggle-neutral{% endif %} {% if color == "success" %} toggle-success{% endif %} {% if color == "warning" %} toggle-warning{% endif %} {% if color == "info" %} toggle-info{% endif %} {% if color == "error" %} toggle-error{% endif %} {% if size == "xs" %} toggle-xs{% endif %} {% if size == "sm" %} toggle-sm{% endif %} {% if size == "md" %} toggle-md{% endif %} {% if size == "lg" %} toggle-lg{% endif %} {% if size == "xl" %} toggle-xl{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <input type="checkbox" class="toggle">
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </label>
+{%- endmacro %}

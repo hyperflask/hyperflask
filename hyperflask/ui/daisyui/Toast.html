@@ -1,0 +1,8 @@
+{% macro Toast(x=None, y=None) -%}
+    <div class="toast {% if x == "start" %} toast-start{% endif %} {% if x == "center" %} toast-center{% endif %} {% if x == "end" %} toast-end{% endif %} {% if y == "top" %} toast-top{% endif %} {% if y == "middle" %} toast-middle{% endif %} {% if y == "bottom" %} toast-bottom{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </div>
+{%- endmacro %}

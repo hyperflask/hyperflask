@@ -1,0 +1,10 @@
+{% macro Drawer(id="drawer1", open=False, responsive=None, end=False) -%}
+    <div class="drawer {% if open %} drawer-open{% endif %} {% if responsive == "xs" %} xs:drawer-open{% endif %} {% if responsive == "sm" %} sm:drawer-open{% endif %} {% if responsive == "md" %} md:drawer-open{% endif %} {% if responsive == "lg" %} lg:drawer-open{% endif %} {% if responsive == "xl" %} xl:drawer-open{% endif %} {% if end %} drawer-end{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <input type="checkbox" class="drawer-toggle" {% if id %}id="{{id}}"{% endif %}>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </div>
+{%- endmacro %}

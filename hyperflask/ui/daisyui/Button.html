@@ -1,0 +1,6 @@
+{% macro Button(color=None, active=False, outline=False, size=None, wide=False, block=False, shape=None, join=False, as="button") -%}
+    <{{as}} class="btn {% if color == "primary" %} btn-primary{% endif %} {% if color == "secondary" %} btn-secondary{% endif %} {% if color == "accent" %} btn-accent{% endif %} {% if color == "neutral" %} btn-neutral{% endif %} {% if color == "success" %} btn-success{% endif %} {% if color == "warning" %} btn-warning{% endif %} {% if color == "info" %} btn-info{% endif %} {% if color == "error" %} btn-error{% endif %} {% if active %} btn-active{% endif %} {% if outline %} btn-outline{% endif %} {% if size == "xs" %} btn-xs{% endif %} {% if size == "sm" %} btn-sm{% endif %} {% if size == "md" %} btn-md{% endif %} {% if size == "lg" %} btn-lg{% endif %} {% if size == "xl" %} btn-xl{% endif %} {% if wide %} btn-wide{% endif %} {% if block %} btn-block{% endif %} {% if shape == "square" %} btn-square{% endif %} {% if shape == "circle" %} btn-circle{% endif %} {% if join %} join-item{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </{{as}}>
+{%- endmacro %}

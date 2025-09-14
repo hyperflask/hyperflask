@@ -1,0 +1,3 @@
+{% macro Tab(label, name="tabs1") -%}
+    <input type="radio" class="tab  {{kwargs.pop('class', '')}}" aria-label="{{label}}" {% if name %}name="{{name}}"{% endif %} {{ html_attrs(kwargs) }}>
+{%- endmacro %}

@@ -1,0 +1,16 @@
+{% macro Avatar(src=None, placeholder=None, placeholder_text_size=None, alt=None, rounded=True, size=12, mask=None, presence=None, indicator=None, indicator_color=None, indicator_position_x=None, indicator_position_y=None) -%}
+    <div class="avatar {% if placeholder %} avatar-placeholder{% endif %} {% if presence == "online" %} avatar-online{% endif %} {% if presence == "offline" %} avatar-offline{% endif %} {% if indicator %} indicator{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {% if not indicator %}{% else %}<span class="indicator-item badge {% if indicator_color == "primary" %} badge-primary{% endif %} {% if indicator_color == "secondary" %} badge-secondary{% endif %} {% if indicator_color == "accent" %} badge-accent{% endif %} {% if indicator_color == "neutral" %} badge-neutral{% endif %} {% if indicator_color == "success" %} badge-success{% endif %} {% if indicator_color == "warning" %} badge-warning{% endif %} {% if indicator_color == "info" %} badge-info{% endif %} {% if indicator_color == "error" %} badge-error{% endif %} {% if indicator_position_x == "start" %} indicator-start{% endif %} {% if indicator_position_x == "center" %} indicator-center{% endif %} {% if indicator_position_x == "end" %} indicator-end{% endif %} {% if indicator_position_y == "top" %} indicator-top{% endif %} {% if indicator_position_y == "middle" %} indicator-middle{% endif %} {% if indicator_position_y == "bottom" %} indicator-bottom{% endif %}">
+        {% if indicator %}{{indicator}}{% else %}
+        {% endif %}</span>{% endif %}
+        
+        <div class="{% if placeholder %}bg-neutral text-neutral-content{% endif %} {% if rounded %} .rounded{% endif %} {% if size %} w-{{size}}{% endif %} {% if mask == "squircle" %} mask mask-squircle{% endif %} {% if mask == "heart" %} mask mask-heart{% endif %} {% if mask == "hexagon" %} mask mask-hexagon{% endif %} {% if mask == "hexagon-2" %} mask mask-hexagon-2{% endif %} {% if mask == "decagon" %} mask mask-decagon{% endif %} {% if mask == "pentagon" %} mask mask-pentagon{% endif %} {% if mask == "diamond" %} mask mask-diamond{% endif %} {% if mask == "square" %} mask mask-square{% endif %} {% if mask == "circle" %} mask mask-circle{% endif %} {% if mask == "star" %} mask mask-star{% endif %} {% if mask == "star-2" %} mask mask-star-2{% endif %} {% if mask == "triangle" %} mask mask-triangle{% endif %} {% if mask == "triangle-2" %} mask mask-triangle-2{% endif %} {% if mask == "triangle-3" %} mask mask-triangle-3{% endif %} {% if mask == "triangle-4" %} mask mask-triangle-4{% endif %} {% if mask == "half-1" %} mask mask-half-1{% endif %} {% if mask == "half-2" %} mask mask-half-2{% endif %}">
+        {% if placeholder %}<span class="text-{{placeholder_text_size}}">{{placeholder}}</span>{% else %}
+            
+            <img {% if src %}src="{{src}}"{% endif %} {% if alt %}alt="{{alt}}"{% endif %}>
+            
+        {% endif %}</div>
+        
+    </div>
+{%- endmacro %}

@@ -1,0 +1,6 @@
+{% macro Pagination() -%}
+    <div class="join  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </div>
+{%- endmacro %}

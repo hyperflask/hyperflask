@@ -1,0 +1,6 @@
+{% macro Badge(color=None, size=None, soft=False, outline=False, dash=False, ghost=False) -%}
+    <div class="badge {% if color == "primary" %} badge-primary{% endif %} {% if color == "secondary" %} badge-secondary{% endif %} {% if color == "accent" %} badge-accent{% endif %} {% if color == "neutral" %} badge-neutral{% endif %} {% if color == "success" %} badge-success{% endif %} {% if color == "warning" %} badge-warning{% endif %} {% if color == "info" %} badge-info{% endif %} {% if color == "error" %} badge-error{% endif %} {% if size == "xs" %} badge-xs{% endif %} {% if size == "sm" %} badge-sm{% endif %} {% if size == "md" %} badge-md{% endif %} {% if size == "lg" %} badge-lg{% endif %} {% if size == "xl" %} badge-xl{% endif %} {% if soft %} badge-soft{% endif %} {% if outline %} badge-outline{% endif %} {% if dash %} badge-dash{% endif %} {% if ghost %} badge-ghost{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </div>
+{%- endmacro %}

@@ -1,0 +1,14 @@
+{% macro Stat(title, value, desc=None, color=None) -%}
+    <div class="stat  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <div class="stat-title">
+        </div>
+        
+        <div class="stat-value">
+        </div>
+        
+        <div class="stat-desc">
+        </div>
+        
+    </div>
+{%- endmacro %}

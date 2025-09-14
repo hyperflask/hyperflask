@@ -1,0 +1,6 @@
+{% macro ModalTitle() -%}
+    <h3 class="text-lg font-bold mb-4  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </h3>
+{%- endmacro %}

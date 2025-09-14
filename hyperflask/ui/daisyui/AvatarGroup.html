@@ -1,0 +1,8 @@
+{% macro AvatarGroup() -%}
+    <div class="avatar-group -space-x-6  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </div>
+{%- endmacro %}

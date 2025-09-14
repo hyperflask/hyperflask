@@ -25,3 +25,11 @@
 .htmx-request.htmx-indicator-invisible {
   visibility: hidden;
 }
+
+.form-w-full {
+  .input,
+  .select,
+  .textarea {
+    width: 100%;
+  }
+}

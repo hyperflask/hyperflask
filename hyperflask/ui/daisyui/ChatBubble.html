@@ -1,0 +1,30 @@
+{% macro ChatBubble(reply=False, avatar=None, avatar_alt=None, header=None, footer=None, color=None) -%}
+    <div class="chat {% if reply %} chat-end{% endif %} {% if not reply %} chat-start{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {% if not avatar %}{% else %}<div class="chat-image avatar">
+            
+            <div class="w-10 rounded-full">
+                
+                <img {% if avatar %}src="{{avatar}}"{% endif %} {% if avatar_alt %}alt="{{avatar_alt}}"{% endif %}>
+                
+            </div>
+            
+        </div>{% endif %}
+        
+        {% if not header %}{% else %}<div class="chat-header">
+        {% if header %}{{header}}{% else %}
+        {% endif %}</div>{% endif %}
+        
+        <div class="chat-bubble {% if color == "primary" %} chat-primary{% endif %} {% if color == "secondary" %} chat-secondary{% endif %} {% if color == "accent" %} chat-accent{% endif %} {% if color == "neutral" %} chat-neutral{% endif %} {% if color == "success" %} chat-success{% endif %} {% if color == "warning" %} chat-warning{% endif %} {% if color == "info" %} chat-info{% endif %} {% if color == "error" %} chat-error{% endif %}">
+            
+            {{ caller() if caller else "" }}
+            
+            
+        </div>
+        
+        {% if not footer %}{% else %}<div class="chat-footer opacity-50">
+        {% if footer %}{{footer}}{% else %}
+        {% endif %}</div>{% endif %}
+        
+    </div>
+{%- endmacro %}

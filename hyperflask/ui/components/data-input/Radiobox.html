@@ -1,4 +1,0 @@
-{% macro Radiobox(style=None, size=None) -%}
-    <input type="radio" class="radio {{kwargs.pop('class', '')}} {% if style %} radio-{{style}}{% endif %} {% if size %} radio-{{size}}{% endif %}" {{ html_attrs(kwargs) }}>
-    </input>
-{%- endmacro %}

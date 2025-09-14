@@ -1,0 +1,10 @@
+{% macro Swap(rotate=False) -%}
+    <label class="swap {% if rotate %} swap-rotate{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <input type="checkbox">
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </label>
+{%- endmacro %}

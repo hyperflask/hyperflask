@@ -1,0 +1,36 @@
+{% macro Navbar(title, title_href=None, color=None, sidebar_toggle=None, sidebar_toggle_responsive=None) -%}
+    <div class="navbar bg-base-100 {% if color == "primary" %} bg-primary text-primary-content{% endif %} {% if color == "secondary" %} bg-secondary text-secondary-content{% endif %} {% if color == "accent" %} bg-accent text-accent-content{% endif %} {% if color == "neutral" %} bg-neutral text-neutral-content{% endif %} {% if color == "success" %} bg-success text-success-content{% endif %} {% if color == "warning" %} bg-warning text-warning-content{% endif %} {% if color == "info" %} bg-info text-info-content{% endif %} {% if color == "error" %} bg-error text-error-content{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {% if not sidebar_toggle %}{% else %}<div class="flex-none {% if sidebar_toggle_responsive == "xs" %} xs:hidden{% endif %} {% if sidebar_toggle_responsive == "sm" %} sm:hidden{% endif %} {% if sidebar_toggle_responsive == "md" %} md:hidden{% endif %} {% if sidebar_toggle_responsive == "lg" %} lg:hidden{% endif %} {% if sidebar_toggle_responsive == "xl" %} xl:hidden{% endif %}">
+            
+            <label aria-label="open sidebar" class="btn btn-square btn-ghost" {% if sidebar_toggle %}for="{{sidebar_toggle}}"{% endif %}>
+                
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" class="inline-block h-6 w-6 stroke-current">
+                    
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
+                    </path>
+                    
+                </svg>
+                
+            </label>
+            
+        </div>{% endif %}
+        
+        <div class="flex-1">
+            
+            <a class="btn btn-ghost text-xl" {% if title_href %}href="{{title_href}}"{% endif %}>
+                {{title}}
+                
+            </a>
+            
+        </div>
+        
+        <div class="flex-none gap-2">
+            
+            {{ caller() if caller else "" }}
+            
+            
+        </div>
+        
+    </div>
+{%- endmacro %}

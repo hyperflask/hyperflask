@@ -1,0 +1,6 @@
+{% macro Stats(vertical=False) -%}
+    <div class="stats stats-vertical shadow {% if not vertical %} lg:stats-horizontal{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </div>
+{%- endmacro %}

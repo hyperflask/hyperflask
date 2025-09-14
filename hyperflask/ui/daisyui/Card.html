@@ -1,0 +1,22 @@
+{% macro Card(image=None, image_alt=None, image_full=False, image_on_side=False, title=None, size=None) -%}
+    <div class="card bg-base shadow-sm {% if image_full %} image-full{% endif %} {% if image_on_side %} card-side{% endif %} {% if size == "xs" %} card-xs{% endif %} {% if size == "sm" %} card-sm{% endif %} {% if size == "md" %} card-md{% endif %} {% if size == "lg" %} card-lg{% endif %} {% if size == "xl" %} card-xl{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {% if not image %}{% else %}<figure >
+            
+            <img {% if image %}src="{{image}}"{% endif %} {% if image_alt %}alt="{{image_alt}}"{% endif %}>
+            
+        </figure>{% endif %}
+        
+        <div class="card-body">
+            
+            {% if not title %}{% else %}<h2 class="card-title">
+            {% if title %}{{title}}{% else %}
+            {% endif %}</h2>{% endif %}
+            
+            {{ caller() if caller else "" }}
+            
+            
+        </div>
+        
+    </div>
+{%- endmacro %}

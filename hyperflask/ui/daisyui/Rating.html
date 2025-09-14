@@ -1,0 +1,23 @@
+{% macro Rating(name=None, rating=False, mask="star", color="orange-400", size=None, readonly=False, clearable=False) -%}
+    <div class="rating {% if size == "xs" %} rating-xs{% endif %} {% if size == "sm" %} rating-sm{% endif %} {% if size == "md" %} rating-md{% endif %} {% if size == "lg" %} rating-lg{% endif %} {% if size == "xl" %} rating-xl{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {% if clearable == False %}{% else %}<div type="radio" class="rating-hidden {% if mask %} mask-{{mask}}{% endif %} {% if color %} bg-{{color}}{% endif %}" aria-label="clear" {% if name %}name="{{name}}"{% endif %} {% if rating > 0 %}checked="checked"{% endif %} {% if rating > 0 %}aria-current="true"{% endif %}>
+        </div>{% endif %}
+        
+        <div type="radio" class="mask {% if mask %} mask-{{mask}}{% endif %} {% if color %} bg-{{color}}{% endif %}" aria-label="1" {% if name %}name="{{name}}"{% endif %} {% if rating > 1 %}checked="checked"{% endif %} {% if rating > 1 %}aria-current="true"{% endif %}>
+        </div>
+        
+        <div type="radio" class="mask {% if mask %} mask-{{mask}}{% endif %} {% if color %} bg-{{color}}{% endif %}" aria-label="2" {% if name %}name="{{name}}"{% endif %} {% if rating > 2 %}checked="checked"{% endif %} {% if rating > 2 %}aria-current="true"{% endif %}>
+        </div>
+        
+        <div type="radio" class="mask {% if mask %} mask-{{mask}}{% endif %} {% if color %} bg-{{color}}{% endif %}" aria-label="3" {% if name %}name="{{name}}"{% endif %} {% if rating > 3 %}checked="checked"{% endif %} {% if rating > 3 %}aria-current="true"{% endif %}>
+        </div>
+        
+        <div type="radio" class="mask {% if mask %} mask-{{mask}}{% endif %} {% if color %} bg-{{color}}{% endif %}" aria-label="4" {% if name %}name="{{name}}"{% endif %} {% if rating > 4 %}checked="checked"{% endif %} {% if rating > 4 %}aria-current="true"{% endif %}>
+        </div>
+        
+        <div type="radio" class="mask {% if mask %} mask-{{mask}}{% endif %} {% if color %} bg-{{color}}{% endif %}" aria-label="5" {% if name %}name="{{name}}"{% endif %}>
+        </div>
+        
+    </div>
+{%- endmacro %}

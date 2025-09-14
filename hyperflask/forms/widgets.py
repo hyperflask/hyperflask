@@ -1,17 +1,34 @@
 from wtforms import widgets
 
 
-def create_input_class(basecls):
+def create_widget_class(basecls, cssclass="input"):
     class Input(basecls):
         def __call__(self, field, **kwargs):
-            extend_class(kwargs, "input input-bordered w-full")
+            extend_class(kwargs, cssclass)
             return super().__call__(field, **kwargs)
     return Input
 
 
-TextInput = create_input_class(widgets.TextInput)
-PasswordInput = create_input_class(widgets.PasswordInput)
-EmailInput = create_input_class(widgets.EmailInput)
+ColorInput = create_widget_class(widgets.ColorInput)
+CheckboxInput = create_widget_class(widgets.CheckboxInput, "checkbox")
+DateTimeInput = create_widget_class(widgets.DateTimeInput)
+DateTimeLocalInput = create_widget_class(widgets.DateTimeLocalInput)
+DateInput = create_widget_class(widgets.DateInput)
+EmailInput = create_widget_class(widgets.EmailInput)
+FileInput = create_widget_class(widgets.FileInput, "file-input")
+MonthInput = create_widget_class(widgets.MonthInput)
+NumberInput = create_widget_class(widgets.NumberInput)
+PasswordInput = create_widget_class(widgets.PasswordInput)
+RadioInput = create_widget_class(widgets.RadioInput, "radio")
+RangeInput = create_widget_class(widgets.RangeInput, "range")
+SearchInput = create_widget_class(widgets.SearchInput)
+Select = create_widget_class(widgets.Select, "select")
+TelInput = create_widget_class(widgets.TelInput)
+TextArea = create_widget_class(widgets.TextArea, "textarea")
+TextInput = create_widget_class(widgets.TextInput)
+TimeInput = create_widget_class(widgets.TimeInput)
+URLInput = create_widget_class(widgets.URLInput)
+WeekInput = create_widget_class(widgets.WeekInput)
 
 
 def extend_class(kwargs, classes):

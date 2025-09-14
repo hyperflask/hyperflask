@@ -1,0 +1,4 @@
+{% macro Progress() -%}
+    <progress class="progress  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+    </progress>
+{%- endmacro %}

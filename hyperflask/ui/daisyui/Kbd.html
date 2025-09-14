@@ -1,0 +1,6 @@
+{% macro Kbd(size=None) -%}
+    <kbd class="kbd {% if size == "xs" %} kbd-xs{% endif %} {% if size == "sm" %} kbd-sm{% endif %} {% if size == "md" %} kbd-md{% endif %} {% if size == "lg" %} kbd-lg{% endif %} {% if size == "xl" %} kbd-xl{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </kbd>
+{%- endmacro %}

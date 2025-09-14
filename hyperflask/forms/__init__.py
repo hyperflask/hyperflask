@@ -2,9 +2,10 @@ from wtforms import validators, ValidationError
 from wtforms.fields import *
 from wtforms.csrf.core import CSRFTokenField
 from flask_wtf import FlaskForm
-from flask import abort
+from flask import abort, flash as flask_flash
 from jinja_wtforms.form import TEMPLATE_FORM_FIELDS
 from .fields import *
+from flask_wtf.file import FileField, MultipleFileField
 
 
 TEMPLATE_FORM_FIELDS.update({
@@ -34,8 +35,14 @@ TEMPLATE_FORM_FIELDS.update({
 
 
 class Form(FlaskForm):
-    def validate_or_400(self):
+    def validate_or_400(self, flash=None, flash_category="error"):
         if not self.validate():
+            if isinstance(flash, str):
+                flask_flash(flash, flash_category)
+            elif flash:
+                for field, errors in self.errors.items():
+                    for error in errors:
+                        flask_flash(f"{field}: {error}", flash_category)
             abort(400)
 
     def populate_obj(self, obj):

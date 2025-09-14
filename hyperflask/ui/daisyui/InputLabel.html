@@ -1,0 +1,12 @@
+{% macro InputLabel(label=None, floating=False) -%}
+    <label class="{% if floating %}floating-label{% endif %} {% if not floating %} input{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {% if not label %}{% else %}<span class="{% if not floating %}label{% endif %}">
+        {% if label %}{{label}}{% else %}
+        {% endif %}</span>{% endif %}
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </label>
+{%- endmacro %}

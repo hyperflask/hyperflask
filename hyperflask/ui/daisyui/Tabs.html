@@ -1,0 +1,8 @@
+{% macro Tabs(style=None, size=None) -%}
+    <div role="tablist" class="tabs {% if style == "box" %} tabs-box{% endif %} {% if style == "border" %} tabs-border{% endif %} {% if style == "lift" %} tabs-lift{% endif %} {% if size == "xs" %} tabs-xs{% endif %} {% if size == "sm" %} tabs-sm{% endif %} {% if size == "md" %} tabs-md{% endif %} {% if size == "lg" %} tabs-lg{% endif %} {% if size == "xl" %} tabs-xl{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </div>
+{%- endmacro %}

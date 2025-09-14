@@ -1,0 +1,6 @@
+{% macro Step(completed=None, completed_color="primary", color=None, icon=None) -%}
+    <li class="step {% if completed %} step-{{completed_color}}{% endif %} {% if color == "primary" %} step-primary{% endif %} {% if color == "secondary" %} step-secondary{% endif %} {% if color == "accent" %} step-accent{% endif %} {% if color == "neutral" %} step-neutral{% endif %} {% if color == "success" %} step-success{% endif %} {% if color == "warning" %} step-warning{% endif %} {% if color == "info" %} step-info{% endif %} {% if color == "error" %} step-error{% endif %}  {{kwargs.pop('class', '')}}" {% if icon %}data-content="{{icon}}"{% endif %} {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </li>
+{%- endmacro %}

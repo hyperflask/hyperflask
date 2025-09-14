@@ -1,0 +1,8 @@
+{% macro Join(vertical=False) -%}
+    <div class="join {% if vertical %} join-vertical{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </div>
+{%- endmacro %}

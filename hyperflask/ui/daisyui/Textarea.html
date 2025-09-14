@@ -1,0 +1,6 @@
+{% macro Textarea(color=None, size=None, ghost=False) -%}
+    <textarea class="textarea {% if color == "primary" %} textarea-primary{% endif %} {% if color == "secondary" %} textarea-secondary{% endif %} {% if color == "accent" %} textarea-accent{% endif %} {% if color == "neutral" %} textarea-neutral{% endif %} {% if color == "success" %} textarea-success{% endif %} {% if color == "warning" %} textarea-warning{% endif %} {% if color == "info" %} textarea-info{% endif %} {% if color == "error" %} textarea-error{% endif %} {% if size == "xs" %} textarea-xs{% endif %} {% if size == "sm" %} textarea-sm{% endif %} {% if size == "md" %} textarea-md{% endif %} {% if size == "lg" %} textarea-lg{% endif %} {% if size == "xl" %} textarea-xl{% endif %} {% if ghost %} textarea-ghost{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        {{ caller() if caller else "" }}
+        
+    </textarea>
+{%- endmacro %}

@@ -1,0 +1,8 @@
+{% macro Footer(center=False, rows=None) -%}
+    <footer class="footer sm:footer-horizontal p-10 {% if center %} footer-center{% endif %} {% if rows %} grid-rows-{{rows}}{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </footer>
+{%- endmacro %}

@@ -1,0 +1,12 @@
+{% macro Menu(horitzontal=False, size=None) -%}
+    <div class="menu {% if horitzontal %} menu-horizontal{% endif %} {% if size == "xs" %} menu-xs{% endif %} {% if size == "sm" %} menu-sm{% endif %} {% if size == "md" %} menu-md{% endif %} {% if size == "lg" %} menu-lg{% endif %} {% if size == "xl" %} menu-xl{% endif %}  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <ul >
+            
+            {{ caller() if caller else "" }}
+            
+            
+        </ul>
+        
+    </div>
+{%- endmacro %}

@@ -1,0 +1,12 @@
+{% macro Indicator(value=None, color=None, size=None, outline=False, position=None) -%}
+    <div class="indicator  {{kwargs.pop('class', '')}}" {{ html_attrs(kwargs) }}>
+        
+        <span class="indicator-item badge {% if color == "primary" %} badge-primary{% endif %} {% if color == "secondary" %} badge-secondary{% endif %} {% if color == "accent" %} badge-accent{% endif %} {% if color == "neutral" %} badge-neutral{% endif %} {% if color == "success" %} badge-success{% endif %} {% if color == "warning" %} badge-warning{% endif %} {% if color == "info" %} badge-info{% endif %} {% if color == "error" %} badge-error{% endif %} {% if size == "xs" %} badge-xs{% endif %} {% if size == "sm" %} badge-sm{% endif %} {% if size == "md" %} badge-md{% endif %} {% if size == "lg" %} badge-lg{% endif %} {% if size == "xl" %} badge-xl{% endif %} {% if outline %} badge-outline{% endif %} {% if position == "start" %} indicator-start{% endif %} {% if position == "center" %} indicator-center{% endif %} {% if position == "end" %} indicator-end{% endif %} {% if position == "top" %} indicator-top{% endif %} {% if position == "middle" %} indicator-middle{% endif %} {% if position == "bottom" %} indicator-bottom{% endif %}">
+        {% if value %}{{value}}{% else %}
+        {% endif %}</span>
+        
+        {{ caller() if caller else "" }}
+        
+        
+    </div>
+{%- endmacro %}
