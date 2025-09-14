@@ -1,53 +1,60 @@
-[tool.poetry]
+[project]
 name = "hyperflask"
-version = "0.1.6"
+version = "0.2.0"
 description = "Full stack web framework"
-authors = ["Maxime Bouroumeau-Fuseau <maxime.bouroumeau@gmail.com>"]
+authors = [
+    {"name" = "Maxime Bouroumeau-Fuseau", email = "maxime.bouroumeau@gmail.com"}
+]
 readme = "README.md"
 license = "MIT"
-repository = "https://github.com/hyperflask/hyperflask"
-packages = [{include = "hyperflask"}]
+requires-python = ">=3.10"
+dependencies = [
+    "flask>=3.0.0,<4.0.0",
+    "flask-assets-pipeline ~=0.6",
+    "flask-babel-hyper ~=5.1",
+    "flask-collections ~=0.2",
+    "flask-configurator ~=0.1",
+    "flask-debugtoolbar ~=0.15",
+    "flask-dramatiq ~=0.6",
+    "flask-file-routes ~=0.2",
+    "flask-files ~=0.2",
+    "flask-geo ~=0.1",
+    "flask-mailman-templates ~=0.1",
+    "flask-mercure-sse ~=0.2",
+    #"flask-observability ~=0.1"
+    "flask-sqlorm ~=0.2",
+    "flask-super-macros ~=0.1",
+    "flask-talisman ~=1.1",
+    "flask-wtf ~=1.2",
+    "frozen-flask ~=1.0",
+    #"dramatiq-sqlite ~=0.1"
+    "gunicorn ~=22.0",
+    "honcho ~=1.1",
+    "html-sanitizer ~=2.4",
+    "htmx-flask ~=0.1",
+    "jinja2-fragments ~=1.3",
+    "jinja-layout ~=0.4",
+    "jinja-wtforms ~=0.2",
+    "periodiq ~=0.12",
+    "python-slugify ~=8.0.4"
+]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-flask = "^3.0"
-flask-assets-pipeline = "^0.6"
-flask-babel-hyper = "^5.1"
-flask-collections = "^0.2"
-flask-configurator = "^0.1"
-flask-debugtoolbar = "^0.15"
-flask-dramatiq = "^0.6"
-flask-file-routes = "^0.2"
-flask-files = "^0.2"
-flask-geo = "^0.1"
-flask-mailman-templates = "^0.1"
-flask-mercure-sse = "^0.2"
-#flask-observability = "^0.1"
-flask-sqlorm = "^0.2"
-flask-super-macros = "^0.1"
-flask-talisman = "^1.1"
-flask-wtf = "^1.2"
-frozen-flask = "^1.0"
-#dramatiq-sqlite = "^0.1"
-gunicorn = "^22.0"
-honcho = "^1.1"
-html-sanitizer = "^2.4"
-htmx-flask = "^0.1"
-jinja2-fragments = "^1.3"
-jinja-layout = "^0.4"
-jinja-wtforms = "^0.2"
-periodiq = "^0.12"
-python-slugify = "^8.0.4"
-redis = "^5.0"
+[project.urls]
+Repository = "https://github.com/hyperflask/hyperflask"
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.0.0"
-pytest-cov = "^4.1.0"
-ruff = "^0.4.3"
-
-[tool.poetry.scripts]
+[project.scripts]
 hyperflask = "hyperflask.cli:main"
 
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+    "ruff>=0.12.4",
+]
+
+[tool.ruff]
+line-length = 100
+
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.8.11,<0.9.0"]
+build-backend = "uv_build"
