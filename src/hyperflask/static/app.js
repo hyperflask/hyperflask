@@ -28,6 +28,9 @@ import "./app.css";
             if (!form.hasAttribute("action")) {
               form.setAttribute("action", triggerElement.getAttribute("hf-modal"));
             }
+            setTimeout(() => {
+              form.querySelector("input:not([type=hidden])")?.focus();
+            }, 100);
           }
         }
         if (enableTriggerElement) {
