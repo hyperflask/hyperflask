@@ -34,6 +34,7 @@ from .utils.html import sanitize_html, nl2br
 from .utils.models import File as SQLFileType
 from .components import discover_components, register_components
 from .components.jsx import ReactAdapter
+from .model import Model
 from . import page_helpers
 # others
 from jinja_super_macros.registry import FileLoader
@@ -180,6 +181,7 @@ class Hyperflask(Flask):
 
         SQLTemplate.eval_globals.update(app=self)
         self.db = FlaskSQLORM(self, database_uri=database_uri, migrations_folder=migrations_folder)
+        self.db.Model = Model
         self.db.File = SQLFileType
 
     def relative_import_name(self, name):

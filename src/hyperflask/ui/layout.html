@@ -1,0 +1,49 @@
+
+{% macro AppUI() -%}
+  {%- set inner = caller() -%}
+  {%- set responsive = kwargs.pop('responsive', 'md') -%}
+  <{Drawer id="app" drawer_id="app-drawer" responsive=responsive **kwargs }>
+    {{inner}}
+  </{}>
+{%- endmacro %}
+
+{% macro Viewport(overflow=True) -%}
+  {%- set inner = caller() -%}
+  <{DrawerContent id="viewport" class=html_class({"overflow-auto": overflow}, "flex flex-col max-h-screen", kwargs.pop('class', '')) **kwargs }>
+    {{inner}}
+  </{}>
+{%- endmacro %}
+
+{% macro Sidebar() -%}
+  {%- set inner = caller() -%}
+  <{DrawerSide id="sidebar" drawer_id="app-drawer" class=html_class("min-w-[250px] bg-base-200", kwargs.pop('class', None)) **kwargs }>
+    <div class="flex flex-col h-full w-full" id="sidebar-content">
+        {{inner}}
+    </div>
+  </{}>
+{%- endmacro %}
+
+{% macro HBox() -%}
+  {%- set inner = caller() -%}
+    <{div class=html_class("flex gap-4 items-start", kwargs.pop('class', None)) **kwargs }>
+      {{ inner }}
+    </{}>
+{%- endmacro %}
+
+{% macro VBox() -%}
+  {%- set inner = caller() -%}
+    <{div class=html_class("flex flex-col gap-4", kwargs.pop('class', None)) **kwargs }>
+      {{ inner }}
+    </{}>
+{%- endmacro %}
+
+{% macro CenterBox() -%}
+  {%- set inner = caller() -%}
+    <{div class=html_class("flex justify-center items-center h-full", kwargs.pop('class', None)) **kwargs }>
+      {{ inner }}
+    </{}>
+{%- endmacro %}
+
+{% macro Spacer() -%}
+    <{div class=html_class("grow", kwargs.pop('class', None)) **kwargs }></{}>
+{%- endmacro %}

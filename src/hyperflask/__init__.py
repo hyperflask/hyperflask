@@ -7,7 +7,7 @@ from flask_babel import gettext, _, pgettext, _p, ngettext, _n, npgettext, _np, 
 from flask_file_routes import page
 from flask_files import save_file, validate_file
 from flask_mailman_templates import send_mail
-from flask_mercure_sse import publish_signal
+from flask_mercure_sse import publish_signal, mercure_publish
 
 # useful exports from 3rd party libs
 from htmx_flask import request, make_response

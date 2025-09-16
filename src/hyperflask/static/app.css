@@ -29,7 +29,13 @@
 .form-w-full {
   .input,
   .select,
-  .textarea {
+  .textarea,
+  .fieldset,
+  .join {
     width: 100%;
   }
+}
+
+#sidebar > div > .menu {
+  width: 100%;
 }
