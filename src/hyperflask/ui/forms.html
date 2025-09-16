@@ -25,7 +25,7 @@
 {%- endmacro %}
 
 {% macro FormField(field=None, label=None) -%}
-  {% if label or field.label %}<{Label}>{{label or field.label}}</{Label}>{% endif %}
+  {% if label %}<{Label}>{{label}}</{Label}>{% elif field.label and label == None %}<{Label for=field.label.field_id}>{{field.label.text}}</{Label}>{% endif %}
   {{field if field else caller()}}
 {%- endmacro %}
 
