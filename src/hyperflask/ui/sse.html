@@ -1,6 +1,14 @@
 
-{% macro MercureStream(topic, private=True, hx_swap="beforeend", type="message") -%}
-<div hx-ext="sse" sse-connect="{{mercure_authentified_hub_url(topic) if private else mercure_hub_url(topic)}}" sse-swap="{{type}}" hx-swap="{{hx_swap}}" {{html_attrs(**kwargs)}}>
+{% macro MercureStream(topic=None, private=True, hx_swap="beforeend", type=None, auto_scroll=False) -%}
+<div {% if topic %}hx-ext="sse" sse-connect="{{mercure_authentified_hub_url(topic) if private else mercure_hub_url(topic)}}"{% endif %}
+  sse-swap="{{mercure_topic(topic if topic and not type and app.extensions['mercure_sse'].type_is_topic else (type or 'message'))}}"
+  hx-swap="{{hx_swap}}" {% if auto_scroll %}hx-bottom-scroll-on-trigger="htmx:sseMessage"{% endif %} {{html_attrs(**kwargs)}}>
+    {{ caller() }}
+</div>
+{%- endmacro %}
+
+{% macro MercureStreamContext(topics, private=True) -%}
+<div hx-ext="sse" sse-connect="{{mercure_authentified_hub_url(topics) if private else mercure_hub_url(topic)}}" {{html_attrs(**kwargs)}}>
     {{ caller() }}
 </div>
 {%- endmacro %}

@@ -1,5 +1,5 @@
 from flask_file_routes import DEFAULT_HELPERS
-from flask import g, current_app
+from flask import current_app
 from .utils.page_actions import page_action
 
 
@@ -18,19 +18,11 @@ def form(page):
     return form_helper
 
 
-def stream(page):
-    g.__page_stream__ = True
-    return
-
-
 def action(page):
-    def decorator(func=None, name=None):
-        return page_action(func, name)
-    return decorator
+    return page_action
 
 
 DEFAULT_HELPERS.update(csrf_protect=csrf_protect,
                        forms=forms,
                        form=form,
-                       stream=stream,
                        action=action)

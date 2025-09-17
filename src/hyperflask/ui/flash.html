@@ -1,8 +1,17 @@
 
 {% macro FlashMessages() -%}
-  <{Toast id="flash-messages"}>
-    {% for category, message in get_flashed_messages(True) %}
-      <{Alert color=category}>{{message}}</{Alert}>
-    {% endfor %}
+  {%- for category, message in get_flashed_messages(True) -%}
+    <{FlashMessage category=category}>{{message}}</{FlashMessage}>
+  {%- endfor -%}
+{%- endmacro %}
+
+{% macro FlashMessage(category="info") -%}
+  {%- set message = caller() -%}
+  <{Alert color=category class="flash-message" **kwargs }>{{message}}</{Alert}>
+{%- endmacro %}
+
+{% macro FlashMessagesToast() -%}
+  <{Toast id="flash-messages-toast" class="z-1000"}>
+    <{FlashMessages}/>
   </{Toast}>
 {%- endmacro %}

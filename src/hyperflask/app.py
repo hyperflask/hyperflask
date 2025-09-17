@@ -28,7 +28,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 # from hyperflask
 from .forms import Form
 from .utils.page_actions import page_action_url
-from .utils.htmx import htmx_oob
+from .utils.htmx import htmx_oob, respond_with_flash_messages
 from .utils.markdown import jinja_markdown, MarkdownExtension
 from .utils.html import sanitize_html, nl2br
 from .utils.models import File as SQLFileType
@@ -69,6 +69,8 @@ class Hyperflask(Flask):
             "OTEL_INSTRUMENT": instrument,
             "DRAMATIQ_BROKER": "dramatiq.brokers.redis:RedisBroker",
             "DEBUG_TB_INTERCEPT_REDIRECTS": False,
+            "SESSION_COOKIE_HTTPONLY": True,
+            "SESSION_COOKIE_SAMESITE": "Lax",
             # Hyperflask specific
             "LAYOUT": "layouts/default.html",
             "STATIC_MODE": static_mode,
@@ -76,7 +78,9 @@ class Hyperflask(Flask):
             "HTMX_EXT": ["hf-modal"],
             "HTMX_BOOST_SITE": False,
             "MARKDOWN_OPTIONS": {"extensions": ["fenced_code", "nl2br", "attr_list", "admonition", "codehilite"]},
-            "MARKDOWN_SANITIZER_CONFIG": {}
+            "MARKDOWN_SANITIZER_CONFIG": {},
+            "FLASH_TOAST_OOB": True,
+            "FLASH_TOAST_REMOVE_AFTER": None
         })
         if config:
             self.config.update(config)
@@ -95,6 +99,7 @@ class Hyperflask(Flask):
         self.jinja_env.add_extension(WtformExtension)
         self.jinja_env.add_extension(MarkdownExtension)
         self.jinja_env.filters.update(markdown=jinja_markdown, sanitize=sanitize_html, nl2br=nl2br)
+        self.jinja_env.globals.update(page_action_url=page_action_url, app=self)
         self.jinja_env.form_base_cls = Form
         self.jinja_env.default_layout = self.config["LAYOUT"]
         self.forms = self.jinja_env.forms
@@ -148,7 +153,6 @@ class Hyperflask(Flask):
         })
         self.assets.bundle(
             {"@hyperflask": ["app.js"],
-             "@hyperflask/reactive": ["reactive.js"],
              "@hyperflask/alpine": ["alpine.js"]},
             from_package="hyperflask",
             assets_folder="static"
@@ -175,7 +179,8 @@ class Hyperflask(Flask):
             for macro in self.macros.create_from_directory(os.path.join(self.root_path, forms_folder)):
                 self.forms.register(self.macros.resolve_template(macro), macro)
 
-        self.jinja_env.globals.update(page_action_url=page_action_url)
+        if self.config["FLASH_TOAST_OOB"]:
+            self.after_request(respond_with_flash_messages)
 
         self.collections.register_freezer_generator(self.freezer)
 

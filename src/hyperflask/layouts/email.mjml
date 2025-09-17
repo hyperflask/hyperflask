@@ -21,10 +21,10 @@
       </mj-style>
       {% endblock %}
     </mj-head>
-    <mj-body {% block body_tags %}background-color="{{config.get("EMAIL_BACKGROUND_COLOR", "#c8c8c8")}}" width="600px"{% endblock %}>
-      <mj-section full-width="full-width" background-color="{{config.get("EMAIL_BACKGROUND_ACCENT_COLOR", "#a6a6a6")}}" padding-bottom="0">
+    <mj-body {% block body_tags %}background-color="{{config.get("EMAIL_BACKGROUND_COLOR", "#ebebebff")}}" width="600px"{% endblock %}>
+      <mj-section full-width="full-width" background-color="{{config.get("EMAIL_BACKGROUND_ACCENT_COLOR", "#d1d1d1ff")}}" padding-bottom="0">
         <mj-column width="100%">
-          <mj-text color="#4d4d4d" font-weight="bold" align="center" font-size="16px" letter-spacing="1px">
+          <mj-text color="#474747ff" font-weight="bold" align="center" font-size="16px" letter-spacing="1px">
             {% block brand %}
               {{config.get("SITE_TITLE", "")}}
             {% endblock %}

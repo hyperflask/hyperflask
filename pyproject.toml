@@ -1,6 +1,6 @@
 [project]
 name = "hyperflask"
-version = "0.2.3"
+version = "0.2.4"
 description = "Full stack web framework"
 authors = [
     {"name" = "Maxime Bouroumeau-Fuseau", email = "maxime.bouroumeau@gmail.com"}
