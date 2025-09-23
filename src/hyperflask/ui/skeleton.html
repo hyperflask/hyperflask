@@ -1,0 +1,33 @@
+
+{% macro SkeletonLines(with_title=True, nb_lines=4) -%}
+  <div class="max-w-full animate-pulse">
+    <div
+      class="block w-4/5 h-3 mb-4 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+      &nbsp;
+    </div>
+    {% for _ in range(nb_lines - 1) -%}
+      <div
+        class="block h-2 mb-2 font-sans text-base antialiased font-light leading-relaxed bg-gray-300 rounded-full text-inherit w-full">
+        &nbsp;
+      </div>
+    {%- endfor %}
+  </div>
+{%- endmacro %}
+
+{% macro SkeletonBlock(icon=None) -%}
+  {{html_tag("div", class_="grid h-full animate-pulse place-items-center rounded-lg bg-gray-300 text-xxl text-gray-500", **kwargs)}}
+    {% if icon %}<{Icon icon}/>{% endif %}
+  </div>
+{%- endmacro -%}
+
+{% macro SkeletonCard() -%}
+
+{%- endmacro %}
+
+{% macro SkeletonList() -%}
+
+{%- endmacro %}
+
+{% macro SkeletonTable() -%}
+
+{%- endmacro %}

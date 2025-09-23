@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.10"
 
 [[package]]
@@ -523,13 +523,9 @@ wheels = [
 [[package]]
 name = "flask-dramatiq"
 version = "0.6.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://gitlab.com/bersace/flask-dramatiq#a45af5315c2a2a7d35e084a9193f0f43888aa6b7" }
 dependencies = [
     { name = "dramatiq" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/e8/b0/c03d2184693ddf6a9f8e8b79d72670446f38758f6c067082b86a50bda8bd/flask-dramatiq-0.6.0.tar.gz", hash = "sha256:63709e73d7c8d2e5d9bc554d1e859d91c5c5c9a4ebc9461752655bf1e0b87420", size = 5672, upload-time = "2019-11-06T11:14:42.291Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/49/52/496d15ad26f3586fb3addfd71cea493115a5de528ec4eae6ed44b2c0577c/flask_dramatiq-0.6.0-py3-none-any.whl", hash = "sha256:7d4a9289721577f726183f7c44c6713a16bbdff54b946f27abc2ffcc65768adf", size = 5902, upload-time = "2019-11-06T11:14:43.802Z" },
 ]
 
 [[package]]
@@ -640,15 +636,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/10/da/c8bb067cffd007ff704268693c2af37c1e7ecf204369a293e80657914d87/flask_super_macros-0.1.0.tar.gz", hash = "sha256:4e80bed45ffbe53ab9544f9a3f2918cb7c14bb6359ccb8033556db763db50cff", size = 2945, upload-time = "2024-09-02T22:07:08.387Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/82/26/d4c6a1576812c308974f96be6549b7af8cdb30253bd2d2fef0accb5b94c0/flask_super_macros-0.1.0-py3-none-any.whl", hash = "sha256:1ef9aa6d72202c9dbad517954ca0c05ca1228ae172348a800539b3d9c77e6e4c", size = 3707, upload-time = "2024-09-02T22:07:07.197Z" },
-]
-
-[[package]]
-name = "flask-talisman"
-version = "1.1.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/38/5c/157d51e32eaffdb34ee316261239937d66400a57cd8146176fd8ce50c43a/flask-talisman-1.1.0.tar.gz", hash = "sha256:c5f486f5f54420729f84b3c3850cd63f96e8b033a9629bee66c524ea363797ff", size = 22656, upload-time = "2023-08-03T12:00:28.09Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/77/1c/a15ac936dc3ae4491c5ff089dccdccd72cd3608b15fcf4e2de961f9ee8f3/flask_talisman-1.1.0-py2.py3-none-any.whl", hash = "sha256:3c42b610ebe49b0e35ca150e179bf51aa1da01e4635b49a674868ea681046208", size = 18967, upload-time = "2023-08-03T12:00:26.041Z" },
 ]
 
 [[package]]
@@ -796,26 +783,26 @@ wheels = [
 
 [[package]]
 name = "gunicorn"
-version = "22.0.0"
+version = "23.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "packaging" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1e/88/e2f93c5738a4c1f56a458fc7a5b1676fc31dcdbb182bef6b40a141c17d66/gunicorn-22.0.0.tar.gz", hash = "sha256:4a0b436239ff76fb33f11c07a16482c521a7e09c1ce3cc293c2330afe01bec63", size = 3639760, upload-time = "2024-04-16T22:58:19.218Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/34/72/9614c465dc206155d93eff0ca20d42e1e35afc533971379482de953521a4/gunicorn-23.0.0.tar.gz", hash = "sha256:f014447a0101dc57e294f6c18ca6b40227a4c90e9bdb586042628030cba004ec", size = 375031, upload-time = "2024-08-10T20:25:27.378Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/29/97/6d610ae77b5633d24b69c2ff1ac3044e0e565ecbd1ec188f02c45073054c/gunicorn-22.0.0-py3-none-any.whl", hash = "sha256:350679f91b24062c86e386e198a15438d53a7a8207235a78ba1b53df4c4378d9", size = 84443, upload-time = "2024-04-16T22:58:15.233Z" },
+    { url = "https://files.pythonhosted.org/packages/cb/7d/6dac2a6e1eba33ee43f318edbed4ff29151a49b5d37f080aad1e6469bca4/gunicorn-23.0.0-py3-none-any.whl", hash = "sha256:ec400d38950de4dfd418cff8328b2c8faed0edb0d517d3394e457c317908ca4d", size = 85029, upload-time = "2024-08-10T20:25:24.996Z" },
 ]
 
 [[package]]
 name = "honcho"
-version = "1.1.0"
+version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0e/7c/c0aa47711b5ada100273cbe190b33cc12297065ce559989699fd6c1ec0cb/honcho-1.1.0.tar.gz", hash = "sha256:c5eca0bded4bef6697a23aec0422fd4f6508ea3581979a3485fc4b89357eb2a9", size = 32699, upload-time = "2021-10-30T15:18:04.759Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/65/c8/d860888358bf5c8a6e7d78d1b508b59b0e255afd5655f243b8f65166dafd/honcho-2.0.0.tar.gz", hash = "sha256:af3815c03c634bf67d50f114253ea9fef72ecff26e4fd06b29234789ac5b8b2e", size = 45618, upload-time = "2024-10-06T14:26:53.871Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b3/fa/e23333eeb1f5b31a053759eb785389cac9c4cdf1f8867dda8cae9c74535f/honcho-1.1.0-py2.py3-none-any.whl", hash = "sha256:a4d6e3a88a7b51b66351ecfc6e9d79d8f4b87351db9ad7e923f5632cc498122f", size = 21336, upload-time = "2021-10-30T15:18:02.579Z" },
+    { url = "https://files.pythonhosted.org/packages/48/1c/25631fc359955569e63f5446dbb7022c320edf9846cbe892ee5113433a7e/honcho-2.0.0-py3-none-any.whl", hash = "sha256:56dcd04fc72d362a4befb9303b1a1a812cba5da283526fbc6509be122918ddf3", size = 22093, upload-time = "2024-10-06T14:26:52.181Z" },
 ]
 
 [[package]]
@@ -855,7 +842,7 @@ wheels = [
 
 [[package]]
 name = "hyperflask"
-version = "0.2.0"
+version = "0.2.4"
 source = { editable = "." }
 dependencies = [
     { name = "flask" },
@@ -872,7 +859,6 @@ dependencies = [
     { name = "flask-mercure-sse" },
     { name = "flask-sqlorm" },
     { name = "flask-super-macros" },
-    { name = "flask-talisman" },
     { name = "flask-wtf" },
     { name = "frozen-flask" },
     { name = "gunicorn" },
@@ -881,9 +867,9 @@ dependencies = [
     { name = "htmx-flask" },
     { name = "jinja-layout" },
     { name = "jinja-wtforms" },
-    { name = "jinja2-fragments" },
     { name = "periodiq" },
     { name = "python-slugify" },
+    { name = "redis" },
 ]
 
 [package.dev-dependencies]
@@ -900,8 +886,8 @@ requires-dist = [
     { name = "flask-babel-hyper", specifier = "~=5.1" },
     { name = "flask-collections", specifier = "~=0.2" },
     { name = "flask-configurator", specifier = "~=0.1" },
-    { name = "flask-debugtoolbar", specifier = "~=0.15" },
-    { name = "flask-dramatiq", specifier = "~=0.6" },
+    { name = "flask-debugtoolbar", specifier = "~=0.16" },
+    { name = "flask-dramatiq", git = "https://gitlab.com/bersace/flask-dramatiq" },
     { name = "flask-file-routes", specifier = "~=0.2" },
     { name = "flask-files", specifier = "~=0.2" },
     { name = "flask-geo", specifier = "~=0.1" },
@@ -909,18 +895,17 @@ requires-dist = [
     { name = "flask-mercure-sse", specifier = "~=0.2" },
     { name = "flask-sqlorm", specifier = "~=0.2" },
     { name = "flask-super-macros", specifier = "~=0.1" },
-    { name = "flask-talisman", specifier = "~=1.1" },
     { name = "flask-wtf", specifier = "~=1.2" },
     { name = "frozen-flask", specifier = "~=1.0" },
-    { name = "gunicorn", specifier = "~=22.0" },
-    { name = "honcho", specifier = "~=1.1" },
-    { name = "html-sanitizer", specifier = "~=2.4" },
+    { name = "gunicorn", specifier = "~=23.0" },
+    { name = "honcho", specifier = "~=2.0" },
+    { name = "html-sanitizer", specifier = "~=2.6" },
     { name = "htmx-flask", specifier = "~=0.1" },
     { name = "jinja-layout", specifier = "~=0.4" },
     { name = "jinja-wtforms", specifier = "~=0.2" },
-    { name = "jinja2-fragments", specifier = "~=1.3" },
-    { name = "periodiq", specifier = "~=0.12" },
+    { name = "periodiq", git = "https://gitlab.com/bersace/periodiq" },
     { name = "python-slugify", specifier = "~=8.0.4" },
+    { name = "redis", specifier = "~=6.4" },
 ]
 
 [package.metadata.requires-dev]
@@ -1017,18 +1002,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/df/bf/f7da0350254c0ed7c72f3e33cef02e048281fec7ecec5f032d4aac52226b/jinja2-3.1.6.tar.gz", hash = "sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d", size = 245115, upload-time = "2025-03-05T20:05:02.478Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/62/a1/3d680cbfd5f4b8f15abc1d571870c5fc3e594bb582bc3b64ea099db13e56/jinja2-3.1.6-py3-none-any.whl", hash = "sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67", size = 134899, upload-time = "2025-03-05T20:05:00.369Z" },
-]
-
-[[package]]
-name = "jinja2-fragments"
-version = "1.9.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "jinja2" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/51/ed/00bfcc466e683d64d276ec7469e0abc01d81f1b63d612438084630fca0b7/jinja2_fragments-1.9.0.tar.gz", hash = "sha256:d903fe5781da1c1867f5fa6a53c5b58fabe7bd2a2721618db48ecba2974d2429", size = 17453, upload-time = "2025-04-20T22:46:50.623Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e2/05/2a29edac68484f1e1171d257773f73b436a240bd2640ab66d27bfadb69ae/jinja2_fragments-1.9.0-py3-none-any.whl", hash = "sha256:69b91e7e2f325ea7e391e36a9abcc572db967e2bf3afd35f74fcb78fc9f8c6c5", size = 14433, upload-time = "2025-04-20T22:46:48.778Z" },
 ]
 
 [[package]]
@@ -1510,14 +1483,10 @@ wheels = [
 [[package]]
 name = "periodiq"
 version = "0.13.0"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://gitlab.com/bersace/periodiq#65acd14b8739bd8577c5f44729d211c64c274423" }
 dependencies = [
     { name = "dramatiq" },
     { name = "pendulum" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/13/89/792352ff691f21f51e299ad67f98399c762b1b744cf38a2d128485b34c14/periodiq-0.13.0.tar.gz", hash = "sha256:ecd83d7614bb9e019aa2718b63c4ffe0a6c77fa0d49f33fd90c309982ddcf7cb", size = 20217, upload-time = "2024-10-16T09:30:31.606Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/1b/f1/3ddb6669e523068b009ca0f4a2e76e847a709df5a4b78ae015a73dd091e5/periodiq-0.13.0-py3-none-any.whl", hash = "sha256:f30d0d80ff7fa005958d1730e03f5a085420bb79aaa3b8331265d20d8a2e57af", size = 36897, upload-time = "2024-10-16T09:30:29.845Z" },
 ]
 
 [[package]]
@@ -1777,6 +1746,18 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/fe/0f/25911a9f080464c59fab9027482f822b86bf0608957a5fcc6eaac85aa515/PyYAML-6.0.2-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:68ccc6023a3400877818152ad9a1033e3db8625d899c72eacb5a668902e4d652", size = 751597, upload-time = "2024-08-06T20:32:56.985Z" },
     { url = "https://files.pythonhosted.org/packages/14/0d/e2c3b43bbce3cf6bd97c840b46088a3031085179e596d4929729d8d68270/PyYAML-6.0.2-cp313-cp313-win32.whl", hash = "sha256:bc2fa7c6b47d6bc618dd7fb02ef6fdedb1090ec036abab80d4681424b84c1183", size = 140527, upload-time = "2024-08-06T20:33:03.001Z" },
     { url = "https://files.pythonhosted.org/packages/fa/de/02b54f42487e3d3c6efb3f89428677074ca7bf43aae402517bc7cca949f3/PyYAML-6.0.2-cp313-cp313-win_amd64.whl", hash = "sha256:8388ee1976c416731879ac16da0aff3f63b286ffdd57cdeb95f3f2e085687563", size = 156446, upload-time = "2024-08-06T20:33:04.33Z" },
+]
+
+[[package]]
+name = "redis"
+version = "6.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "async-timeout", marker = "python_full_version < '3.11.3'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/0d/d6/e8b92798a5bd67d659d51a18170e91c16ac3b59738d91894651ee255ed49/redis-6.4.0.tar.gz", hash = "sha256:b01bc7282b8444e28ec36b261df5375183bb47a07eb9c603f284e89cbc5ef010", size = 4647399, upload-time = "2025-08-07T08:10:11.441Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e8/02/89e2ed7e85db6c93dfa9e8f691c5087df4e3551ab39081a4d7c6d1f90e05/redis-6.4.0-py3-none-any.whl", hash = "sha256:f0544fa9604264e9464cdf4814e7d4830f74b165d52f2a330a760a88dd248b7f", size = 279847, upload-time = "2025-08-07T08:10:09.84Z" },
 ]
 
 [[package]]

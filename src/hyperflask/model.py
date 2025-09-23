@@ -1,8 +1,13 @@
-from flask_sqlorm import Model as BaseModel
 from flask import current_app
+from flask_sqlorm import Model as BaseModel
+from flask_files import save_file, File
 from sqlorm.resultset import CompositeResultSet
+from sqlorm import SQLType
 from markupsafe import Markup
 import abc
+
+
+File = SQLType("text", save_file, File.from_uri)
 
 
 class ModelResultSet(CompositeResultSet):

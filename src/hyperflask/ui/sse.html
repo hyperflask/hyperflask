@@ -1,14 +1,22 @@
 
-{% macro MercureStream(topic=None, private=True, hx_swap="beforeend", type=None, auto_scroll=False) -%}
-<div {% if topic %}hx-ext="sse" sse-connect="{{mercure_authentified_hub_url(topic) if private else mercure_hub_url(topic)}}"{% endif %}
-  sse-swap="{{mercure_topic(topic if topic and not type and app.extensions['mercure_sse'].type_is_topic else (type or 'message'))}}"
-  hx-swap="{{hx_swap}}" {% if auto_scroll %}hx-bottom-scroll-on-trigger="htmx:sseMessage"{% endif %} {{html_attrs(**kwargs)}}>
-    {{ caller() }}
-</div>
+{% macro MercureStream(topic=None, private=True, hx_swap="beforeend", type=None, auto_scroll=False, with_subscriptions=False) -%}
+  {% set sse_url = mercure_authentified_hub_url(topic, with_subscriptions=with_subscriptions) if private else mercure_hub_url(topic, with_subscriptions=with_subscriptions) %}
+  <div {% if topic %}hx-ext="sse" sse-connect="{{sse_url}}"{% endif %}
+    sse-swap="{{mercure_topic(topic if topic and not type and app.extensions['mercure_sse'].type_is_topic else (type or 'message'))}}"
+    {% if auto_scroll %}hx-bottom-scroll-on-trigger="htmx:sseMessage"{% endif %} {{html_attrs(hx_swap=hx_swap, class_="mercure-stream", **kwargs)}}>
+      {{ caller() }}
+  </div>
 {%- endmacro %}
 
-{% macro MercureStreamContext(topics, private=True) -%}
-<div hx-ext="sse" sse-connect="{{mercure_authentified_hub_url(topics) if private else mercure_hub_url(topic)}}" {{html_attrs(**kwargs)}}>
-    {{ caller() }}
-</div>
+{% macro MercureStreamContext(topics, private=True, with_subscriptions=False) -%}
+  {% set sse_url = mercure_authentified_hub_url(topics, with_subscriptions=with_subscriptions) if private else mercure_hub_url(topics, with_subscriptions=with_subscriptions) %}
+  <div hx-ext="sse" sse-connect="{{sse_url}}" {{html_attrs(class_="mercure-stream-context", **kwargs)}}>
+      {{ caller() }}
+  </div>
+{%- endmacro %}
+
+{% macro MercurePresence(hx_get, topic=None) -%}
+  <div {% if topic %}hx-ext="sse" sse-connect="{{mercure_authentified_hub_url(mercure_subscription_topic(topic))}}"{% endif %}
+    hx-trigger="sse:Subscription" {{html_attrs(hx_get=hx_get, class_="mercure-presence", **kwargs)}}>
+  </div>
 {%- endmacro %}

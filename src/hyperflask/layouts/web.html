@@ -6,8 +6,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% endblock %}
-        {% block page_title %}<title>{% if page_title is defined %}{{ page_title }}{% if config.get("SITE_TITLE") %} | {% endif %}{% endif %}{% if config.get("SITE_TITLE") %}{{config["SITE_TITLE"]}}{% endif %}</title>{% endblock %}
-        {% asset_tags %}
+        {% block page_title %}
+          <title>{% if site_title is defined %}{{site_title}}{% else %}{% if page_title is defined %}{{ page_title }}{% if config.get("SITE_TITLE") %} | {% endif %}{% endif %}{% if config.get("SITE_TITLE") %}{{config["SITE_TITLE"]}}{% endif %}{% endif %}</title>
+        {% endblock %}
+        {% if metadata is defined %}
+          <{PageMetadata metadata=metadata}/>
+        {% endif %}
+        {% asset_tags nonce=csp_nonce %}
         {% block head_assets %}{% endblock %}
         {%- endblock %}
     </head>

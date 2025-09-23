@@ -2,6 +2,7 @@ from markupsafe import Markup
 from flask import request, current_app
 from flask.views import http_method_funcs
 from flask_file_routes import page
+from flask_suspense import render_template
 from jinjapy import extract_frontmatter
 import importlib
 import re
@@ -55,19 +56,34 @@ class ComponentAdapter(BaseComponentAdapter):
                     return props
                 if not props:
                     props = {}
-            return self.render(None, **props)
+            ctx = self.get_render_context(None, **props)
+            return render_template(self.template, **ctx)
 
         if methods:
             app.add_url_rule(url, self.name, view_func=view_func, methods=methods)
 
-    def render(self, caller, *args, **kwargs):
-        tpl = current_app.jinja_env.get_template(self.template)
+    def get_render_context(self, caller, *args, **kwargs):
         ctx = kwargs.pop('_ctx', {})
-        ctx.update(dict(args=args, kwargs=kwargs, props=kwargs, caller=caller, children=caller))
+        ctx.update(dict(args=args, kwargs=kwargs, props=PropsWrapper(kwargs), caller=caller, children=caller))
         if self.module_name:
             module = importlib.import_module(self.module_name)
             if module and "render" in dir(module):
                 _ctx = module.render(*args, **kwargs)
                 if _ctx:
                     ctx.update(_ctx)
-        return Markup(tpl.render(**ctx))
+        return ctx
+
+    def render(self, caller, *args, **kwargs):
+        tpl = current_app.jinja_env.get_template(self.template)
+        ctx = self.get_render_context(caller, *args, **kwargs)
+        return Markup(tpl.render(**ctx)) # do not use render_template() so we don't trigger flask signals
+
+
+class PropsWrapper:
+    def __init__(self, props):
+        self._props = props
+
+    def __getattr__(self, name):
+        if name in self._props:
+            return self._props[name]
+        raise Exception(f"No such prop: {name}")

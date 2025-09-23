@@ -26,7 +26,7 @@
 
 {% macro FormField(field=None, label=None) -%}
   {% if label %}<{Label}>{{label}}</{Label}>{% elif field.label and label == None %}<{Label for=field.label.field_id}>{{field.label.text}}</{Label}>{% endif %}
-  {{field if field else caller()}}
+  {{field(**kwargs) if field else caller()}}
 {%- endmacro %}
 
 {% macro SubmitButton() %}

@@ -68,7 +68,7 @@ def create_app(root_path=None):
     try_import(app, "signals")
     try_import(app, "app")
 
-    if models:
+    if models and app.config.get("INIT_DATABASE", True):
         db.init_db()
 
     return app

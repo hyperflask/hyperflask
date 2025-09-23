@@ -16,7 +16,7 @@
 
 {% macro Sidebar() -%}
   {%- set inner = caller() -%}
-  <{DrawerSide id="sidebar" drawer_id="app-drawer" class=html_class("min-w-[250px] bg-base-200", kwargs.pop('class', None)) **kwargs }>
+  <{DrawerSide id="sidebar" drawer_id="app-drawer" class=html_class("min-w-[250px] max-w-[250px] bg-base-200", kwargs.pop('class', None)) **kwargs }>
     <div class="flex flex-col h-full w-full" id="sidebar-content">
         {{inner}}
     </div>

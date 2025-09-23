@@ -4,7 +4,7 @@ import htmx from "htmx.org";
   let triggerElement = false, enableTriggerElement;
   htmx.defineExtension("hf-modal", {
     getSelectors() {
-        return ['[hf-modal]'];
+      return ['[hf-modal]'];
     },
     onEvent(name, evt) {
       if (name === "htmx:beforeProcessNode" && evt.target.hasAttribute("hf-modal")) {
@@ -42,21 +42,21 @@ import htmx from "htmx.org";
 
 htmx.defineExtension("hx-bottom-scroll-on-trigger", {
   getSelectors() {
-      return ['[hx-bottom-scroll-on-trigger]'];
+    return ['[hx-bottom-scroll-on-trigger]'];
   },
   onEvent(name, evt) {
     if (name === "htmx:afterProcessNode" && evt.target.hasAttribute("hx-bottom-scroll-on-trigger")) {
-        const elt = evt.target;
-        elt.scrollTop = elt.scrollHeight - elt.clientHeight;
-        elt.classList.add("at-bottom");
-        elt.addEventListener("scroll", (e) => {
-          if (e.target.scrollTop < e.target.scrollHeight - e.target.clientHeight - 20) {
-            e.target.classList.remove("at-bottom");
-          } else {
-            e.target.classList.add("at-bottom");
-          }
-        });
-        return;
+      const elt = evt.target;
+      elt.scrollTop = elt.scrollHeight - elt.clientHeight;
+      elt.classList.add("at-bottom");
+      elt.addEventListener("scroll", (e) => {
+        if (e.target.scrollTop < e.target.scrollHeight - e.target.clientHeight - 20) {
+          e.target.classList.remove("at-bottom");
+        } else {
+          e.target.classList.add("at-bottom");
+        }
+      });
+      return;
     }
 
     const eventName = evt.target.getAttribute("hx-bottom-scroll-on-trigger");
@@ -96,12 +96,30 @@ htmx.defineExtension("hx-active-url", {
     document.addEventListener("htmx:pushedIntoHistory", ensureLinksAreActive);
   },
   getSelectors() {
-      return ['[hx-href]'];
+    return ['[hx-href]'];
   },
   onEvent(name, evt) {
     if (name === "htmx:beforeProcessNode" && evt.target.hasAttribute("hx-href")) {
       evt.target.setAttribute('href', evt.target.getAttribute('hx-href'));
       evt.target.setAttribute('hx-push-url', evt.target.getAttribute('hx-href'));
     }
+  }
+});
+
+htmx.defineExtension("hx-stream", {
+  getSelectors() {
+    return ['[hx-stream]'];
+  },
+  onEvent: function (name, evt) {
+    if (name === "htmx:beforeRequest" && evt.target.hasAttribute("hx-stream")) {
+      const target = evt.detail.target;
+      const xhr = evt.detail.xhr;
+      xhr.addEventListener('readystatechange', function () {
+        if (xhr.readyState === 2 || xhr.readyState === 3) {
+          target.innerHTML = xhr.responseText;
+        }
+      });
+    }
+    return true;
   }
 });

@@ -33,6 +33,7 @@ cli.add_command(freeze_command)
 @click.pass_context
 def build_command(ctx):
     ctx.invoke(assets_cli.build)
+    ctx.invoke(freeze_command)
 
 cli.add_command(build_command)
 
@@ -69,8 +70,9 @@ cli.add_command(serve_command)
 @click.option("--host", "-h", default="127.0.0.1", help="The interface to bind to.")
 @click.option("--port", "-p", default=5000, help="The port to bind to.")
 @click.option('--concurrency')
+@click.option("--extend-procfile")
 @click.option("--dev", is_flag=True)
-def run_command(processes, host, port, concurrency, dev):
+def run_command(processes, host, port, concurrency, extend_procfile, dev):
     from honcho.command import _procfile, _parse_concurrency
     from honcho.manager import Manager
     from honcho.printer import Printer
@@ -85,14 +87,18 @@ def run_command(processes, host, port, concurrency, dev):
         if os.path.exists(filename):
             _processes = _procfile(filename).processes
             break
-    if _processes is None:
-        _processes = {
+    if _processes is None or extend_procfile:
+        if not _processes:
+            _processes = {}
+        _processes.update({
             "web": [sys.argv[0], "serve", "--host", host, "--port", "$PORT"],
             # "worker": [sys.argv[0], "worker"],
             # "scheduler": [sys.argv[0], "periodiq"]
-        }
+        })
         if dev:
             _processes["assets"] = [sys.argv[0], "assets", "dev"]
+        else:
+            _processes["mercurehub"] = [sys.executable, "-m", "flask_mercure_sse.server"]
 
     processes = {name: " ".join(_processes[name]) if isinstance(_processes[name], list) else _processes[name]
                  for name in _processes if name in _processes}
@@ -122,6 +128,13 @@ def dev_command(ctx, **kwargs):
 
 dev_command.params = list(run_command.params)
 cli.add_command(dev_command)
+
+
+@click.command("init")
+def init_command():
+    pass
+
+cli.add_command(init_command)
 
 
 def main():

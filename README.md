@@ -70,7 +70,7 @@ A good part of these extensions is developed as part of the Hyperflask project. 
 | [Flask-Mercure-SSE](https://github.com/hyperflask/flask-mercure-sse) | Push events via server-sent events using the [Mercure](https://mercure.rocks) protocol
 | [Flask-SQLORM](https://github.com/hyperflask/flask-sqlorm) | Flask integration of [sqlorm](https://github.com/hyperflask/sqlorm)
 | [Flask-Super-Macros](https://github.com/hyperflask/flask-super-macros) | Better macro management for Jinja
-| [Flask-Talisman](https://github.com/wntrblm/flask-talisman) | HTTP security headers for Flask
+| [Flask-Suspense](https://github.com/hyperflask/flask-suspense) | Suspense for Flask
 | [Flask-WTF](https://flask-wtf.readthedocs.io) | [WTForms](https://wtforms.readthedocs.io) integration
 
 ## Using without Hyperflask-Start
@@ -78,6 +78,5 @@ A good part of these extensions is developed as part of the Hyperflask project. 
 1. Create your project directory: `mkdir example-project && cd example-project`
 2. Create and activate a virtualenv: `python -m venv .venv && source .venv/bin/activate`
 3. `pip install hyperflask`
-4. Create a pages directory: `mkdir pages`
-5. Create your index page: `echo "hello world" > pages/index.html`
-6. Start a development server using `hyperflask dev`
+4. Run `hyperflask init .`
+5. Start a development server using `hyperflask dev`

@@ -5,6 +5,7 @@ def create_widget_class(basecls, cssclass="input"):
     class Input(basecls):
         def __call__(self, field, **kwargs):
             extend_class(kwargs, cssclass)
+            kwargs = {k.replace('_', '-'): v for k, v in kwargs.items() if v is not None}
             return super().__call__(field, **kwargs)
     return Input
 

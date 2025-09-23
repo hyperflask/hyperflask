@@ -1,6 +1,6 @@
 [project]
 name = "hyperflask"
-version = "0.2.4"
+version = "0.3.0"
 description = "Full stack web framework"
 authors = [
     {"name" = "Maxime Bouroumeau-Fuseau", email = "maxime.bouroumeau@gmail.com"}
@@ -10,21 +10,21 @@ license = "MIT"
 requires-python = ">=3.10"
 dependencies = [
     "flask>=3.0.0,<4.0.0",
-    "flask-assets-pipeline ~=0.6",
+    "flask-assets-pipeline ~=0.7",
     "flask-babel-hyper ~=5.1",
     "flask-collections ~=0.2",
     "flask-configurator ~=0.1",
     "flask-debugtoolbar ~=0.16",
     "flask-dramatiq ~=0.6",
-    "flask-file-routes ~=0.2",
+    "flask-file-routes ~=0.3",
     "flask-files ~=0.2",
     "flask-geo ~=0.1",
     "flask-mailman-templates ~=0.1",
-    "flask-mercure-sse ~=0.2",
+    "flask-mercure-sse ~=0.3",
     #"flask-observability ~=0.1"
-    "flask-sqlorm ~=0.2",
+    "flask-sqlorm ~=0.3",
     "flask-super-macros ~=0.1",
-    "flask-talisman ~=1.1",
+    "flask-suspense ~=0.1",
     "flask-wtf ~=1.2",
     "frozen-flask ~=1.0",
     #"dramatiq-sqlite ~=0.1"
@@ -32,12 +32,11 @@ dependencies = [
     "honcho ~=2.0",
     "html-sanitizer ~=2.6",
     "htmx-flask ~=0.1",
-    "jinja2-fragments ~=1.9",
     "jinja-layout ~=0.4",
     "jinja-wtforms ~=0.2",
     "periodiq ~=0.13",
     "python-slugify ~=8.0.4",
-    "redis ~=6.4"
+    "redis ~=6.4",
 ]
 
 [tool.uv.sources]
