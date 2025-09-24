@@ -43,7 +43,7 @@ class ComponentAdapter(BaseComponentAdapter):
         filename = app.jinja_env.loader.get_source(app.jinja_env, self.template)[1]
         with open(filename) as f:
             source = extract_frontmatter(f.read())[1]
-            methods = [m.upper() for m in http_method_funcs if re.search(f"^(def\s+{m}\()|{m}\s*=", source, re.MULTILINE)]
+            methods = [m.upper() for m in http_method_funcs if re.search(rf"^(def\s+{m}\()|{m}\s*=", source, re.MULTILINE)]
 
         def view_func():
             props = {}
