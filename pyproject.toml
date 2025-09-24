@@ -1,6 +1,6 @@
 [project]
 name = "hyperflask"
-version = "0.3.0"
+version = "0.3.1"
 description = "Full stack web framework"
 authors = [
     {"name" = "Maxime Bouroumeau-Fuseau", email = "maxime.bouroumeau@gmail.com"}
@@ -32,7 +32,7 @@ dependencies = [
     "honcho ~=2.0",
     "html-sanitizer ~=2.6",
     "htmx-flask ~=0.1",
-    "jinja-layout ~=0.4",
+    "jinja-layout ~=0.5",
     "jinja-wtforms ~=0.2",
     "periodiq ~=0.13",
     "python-slugify ~=8.0.4",

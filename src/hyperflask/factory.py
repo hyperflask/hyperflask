@@ -1,10 +1,10 @@
-from .app import Hyperflask
 from flask_configurator import Config
 import importlib
 from importlib.metadata import entry_points
 import logging
 import os
-
+from .app import Hyperflask
+from .model import init_db_locked
 
 app = None
 db = None
@@ -69,7 +69,7 @@ def create_app(root_path=None):
     try_import(app, "app")
 
     if models and app.config.get("INIT_DATABASE", True):
-        db.init_db()
+        init_db_locked(app)
 
     return app
 

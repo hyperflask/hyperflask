@@ -7,6 +7,7 @@ import sys
 import multiprocessing
 import gunicorn.app.base
 from .factory import load_config, create_app
+from .security import generate_csp_policy
 
 
 def _create_app():
@@ -22,20 +23,26 @@ cli.add_command(shell_command)
 cli.add_command(routes_command)
 
 
-@click.command("freeze")
+@cli.command("init")
+def init_command():
+    pass
+
+
+@cli.command("freeze")
 def freeze_command():
     current_app.freezer.freeze()
 
-cli.add_command(freeze_command)
 
-
-@click.command("build")
+@cli.command("build")
 @click.pass_context
 def build_command(ctx):
     ctx.invoke(assets_cli.build)
     ctx.invoke(freeze_command)
 
-cli.add_command(build_command)
+
+@cli.command("csp-header")
+def csp_header_command():
+    click.echo(generate_csp_policy())
 
 
 @click.command("serve")
@@ -128,13 +135,6 @@ def dev_command(ctx, **kwargs):
 
 dev_command.params = list(run_command.params)
 cli.add_command(dev_command)
-
-
-@click.command("init")
-def init_command():
-    pass
-
-cli.add_command(init_command)
 
 
 def main():
