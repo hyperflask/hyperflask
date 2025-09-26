@@ -37,6 +37,7 @@ dependencies = [
     "periodiq ~=0.13",
     "python-slugify ~=8.0.4",
     "redis ~=6.4",
+    "watchdog>=6.0.0",
 ]
 
 [tool.uv.sources]

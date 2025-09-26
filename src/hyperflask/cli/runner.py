@@ -1,48 +1,11 @@
-from flask import current_app
-from flask.cli import FlaskGroup, shell_command, routes_command, _debug_option, pass_script_info, run_command as flask_run_command, ScriptInfo, NoAppException
-from flask_assets_pipeline import cli as assets_cli
+from flask.cli import _debug_option, pass_script_info, run_command as flask_run_command
 import click
 import os
 import sys
 import multiprocessing
 import gunicorn.app.base
-from .factory import load_config, create_app
-from .security import generate_csp_policy
-
-
-def _create_app():
-    info = ScriptInfo()
-    try:
-        return info.load_app()
-    except NoAppException:
-        return create_app()
-
-
-cli = FlaskGroup(name='kantree', help='Kantree', add_default_commands=False, create_app=_create_app)
-cli.add_command(shell_command)
-cli.add_command(routes_command)
-
-
-@cli.command("init")
-def init_command():
-    pass
-
-
-@cli.command("freeze")
-def freeze_command():
-    current_app.freezer.freeze()
-
-
-@cli.command("build")
-@click.pass_context
-def build_command(ctx):
-    ctx.invoke(assets_cli.build)
-    ctx.invoke(freeze_command)
-
-
-@cli.command("csp-header")
-def csp_header_command():
-    click.echo(generate_csp_policy())
+from ..factory import load_config
+from . import reloader # import hacky patch of werkzeug reloader
 
 
 @click.command("serve")
@@ -69,7 +32,6 @@ def serve_command(ctx, info, host, port, gunicorn_opt, **run_kwargs):
 
 
 serve_command.params = flask_run_command.params + serve_command.params
-cli.add_command(serve_command)
 
 
 @click.command("run")
@@ -124,7 +86,6 @@ def run_command(processes, host, port, concurrency, extend_procfile, dev):
 
 
 run_command.params.insert(0, _debug_option)
-cli.add_command(run_command)
 
 
 @click.command("dev")
@@ -134,11 +95,6 @@ def dev_command(ctx, **kwargs):
 
 
 dev_command.params = list(run_command.params)
-cli.add_command(dev_command)
-
-
-def main():
-    cli.main()
 
 
 class GunicornServer(gunicorn.app.base.BaseApplication):
