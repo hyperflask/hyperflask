@@ -5,7 +5,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 # hyperflask extensions
 from jinja_layout import LayoutExtension
 from jinja_wtforms import WtformExtension
-from flask_assets_pipeline import AssetsPipeline
+from flask_assets_pipeline import AssetsPipeline, asset_url, static_url
 from flask_super_macros import SuperMacros
 from flask_collections import Collections
 from flask_file_routes import FileRoutes, ModuleView, page
@@ -16,14 +16,13 @@ from flask_files import Files
 from flask_sqlorm import FlaskSQLORM
 from flask_mercure_sse import MercureSSE
 from flask_mailman_templates import MailTemplates
-from flask_suspense import Suspense, render_template, suspense_before_render_template, suspense_before_render_blocks
+from flask_suspense import Suspense, render_template, suspense_before_render_template, suspense_before_render_macros
 #from flask_observability import Observability
 # 3rd party extensions
 from flask_wtf.csrf import CSRFProtect
 from flask_frozen import Freezer
 from htmx_flask import Htmx
 from flask_mailman import Mail
-from flask_dramatiq import Dramatiq
 from flask_debugtoolbar import DebugToolbarExtension
 # from hyperflask
 from .forms import Form
@@ -31,8 +30,10 @@ from .utils.page_actions import page_action_url
 from .utils.htmx import htmx_oob, respond_with_flash_messages
 from .utils.markdown import jinja_markdown, MarkdownExtension
 from .utils.html import sanitize_html, nl2br
+from .utils.metadata import metadata_tags
 from .components import register_components
-from .model import Model, File as SQLFileType
+from .model import Model, File as SQLFileType, UndefinedDatabase
+from .actors import AppContextMiddleware, discover_broker, make_actor_decorator
 from .security import respond_with_security_headers, csp_nonce
 from . import page_helpers
 # others
@@ -40,6 +41,7 @@ from jinja_super_macros.registry import FileLoader
 from jinja_wtforms.extractor import map_jinja_call_node_to_func
 from sqlorm.sql_template import SQLTemplate
 from periodiq import PeriodiqMiddleware
+import dramatiq
 import os
 
 
@@ -55,7 +57,7 @@ class Hyperflask(Flask):
 
     def __init__(self, *args, static_mode="hybrid", instrument=False, layouts_folder="layouts",
                  emails_folder="emails", forms_folder="forms", assets_folder="assets", pages_folder="pages", migrations_folder="migrations",
-                 config=None, config_filename="config.yml", database_uri="sqlite://:memory:", proxy_fix=True, **kwargs):
+                 config=None, config_filename="config.yml", database_uri=None, proxy_fix=True, **kwargs):
 
         super().__init__(*args, **kwargs)
         if proxy_fix:
@@ -66,10 +68,10 @@ class Hyperflask(Flask):
             "FREEZER_STATIC_IGNORE": [],
             "WTF_CSRF_CHECK_DEFAULT": False,
             "OTEL_INSTRUMENT": instrument,
-            "DRAMATIQ_BROKER": "dramatiq.brokers.redis:RedisBroker",
             "DEBUG_TB_INTERCEPT_REDIRECTS": False,
             "SESSION_COOKIE_HTTPONLY": True,
             "SESSION_COOKIE_SAMESITE": "Lax",
+            "SQLORM_URI": database_uri,
             # Hyperflask specific
             "LAYOUT": "layouts/default.html",
             "ALPINE": False,
@@ -117,7 +119,7 @@ class Hyperflask(Flask):
         self.jinja_env.add_extension(WtformExtension)
         self.jinja_env.add_extension(MarkdownExtension)
         self.jinja_env.filters.update(markdown=jinja_markdown, sanitize=sanitize_html, nl2br=nl2br)
-        self.jinja_env.globals.update(page_action_url=page_action_url, app=self, csp_nonce=csp_nonce)
+        self.jinja_env.globals.update(page_action_url=page_action_url, app=self, csp_nonce=csp_nonce, metadata_tags=metadata_tags)
         self.jinja_env.form_base_cls = Form
         self.jinja_env.default_layout = self.config["LAYOUT"]
         self.forms = self.jinja_env.forms
@@ -133,14 +135,11 @@ class Hyperflask(Flask):
         ])
 
         DebugToolbarExtension(self)
-        self.freezer = Freezer(self)
+        self.freezer = Freezer(self, with_no_argument_rules=False)
+        self.freezer.register_generator(lambda: freezer_url_generator(self))
         self.csrf = CSRFProtect(self)
-        #self.talisman = Talisman(self)
         Htmx(self)
         Mail(self)
-        self.dramatiq = Dramatiq(self)
-        self.dramatiq.broker.add_middleware(PeriodiqMiddleware())
-        self.actor = self.dramatiq.actor
 
         SuperMacros(self)
         self.components = self.macros # alias
@@ -205,10 +204,20 @@ class Hyperflask(Flask):
 
         self.collections.register_freezer_generator(self.freezer)
 
-        SQLTemplate.eval_globals.update(app=self)
-        self.db = FlaskSQLORM(self, database_uri=database_uri, migrations_folder=migrations_folder)
-        self.db.Model = Model
-        self.db.File = SQLFileType
+        if self.config.get('SQLORM_URI'):
+            SQLTemplate.eval_globals.update(app=self)
+            self.db = FlaskSQLORM(self, migrations_folder=migrations_folder)
+            self.db.Model = Model
+            self.db.File = SQLFileType
+        else:
+            self.db = UndefinedDatabase()
+
+        broker_cls, broker_url = discover_broker(self.config.get('DRAMATIQ_BROKER'), self.config.get('DRAMATIQ_BROKER_URL'))
+        if broker_cls:
+            self.dramatiq_broker = broker_cls(url=broker_url)
+            self.dramatiq_broker.add_middleware(AppContextMiddleware(self))
+            self.dramatiq_broker.add_middleware(PeriodiqMiddleware())
+        self.actor = make_actor_decorator(self)
 
         Suspense(self, nonce_getter="csp_nonce()")
 
@@ -216,9 +225,10 @@ class Hyperflask(Flask):
         def on_suspense_before_render_template(sender, **kwargs):
             csp_nonce() # we will need a nonce but the first call will be after the template started rendering
 
-        @suspense_before_render_blocks.connect_via(self, weak=False)
-        def on_suspense_before_render_blocks(sender, **kwargs):
-            return f'<script nonce="{csp_nonce()}">htmx.bootstrap()</script>'
+        @suspense_before_render_macros.connect_via(self, weak=False)
+        def on_suspense_before_render_macros(sender, **kwargs):
+            return ""
+            return f'<script nonce="{csp_nonce()}">htmx.bootstrap()</script>' # waiting on PR 3441
 
         @self.errorhandler(404)
         def not_found(error):
@@ -239,6 +249,8 @@ class Hyperflask(Flask):
 
 
 class HyperModuleView(ModuleView):
+    module_globals = dict(ModuleView.module_globals, asset_url=asset_url, static_url=static_url)
+
     def _render_template(self):
         return render_template(page.template)
 
@@ -251,3 +263,11 @@ def dynamic(func=None, static_template=None):
     def decorator(func):
         pass
     return decorator(func) if func else decorator
+
+
+def freezer_url_generator(app):
+    """URL generator for URL rules that take no arguments."""
+    for rule in app.url_map.iter_rules():
+        if not rule.arguments and 'GET' in rule.methods and not rule.endpoint.startswith('mercure'):
+            app.logger.info(rule.endpoint)
+            yield rule.endpoint, {}

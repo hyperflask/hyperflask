@@ -5,6 +5,7 @@ import click
 from ..factory import create_app
 from ..security import generate_csp_policy
 from .runner import serve_command, run_command, dev_command
+from .worker import worker_command, scheduler_command
 
 
 def _create_app():
@@ -21,6 +22,8 @@ cli.add_command(routes_command)
 cli.add_command(serve_command)
 cli.add_command(run_command)
 cli.add_command(dev_command)
+cli.add_command(worker_command)
+cli.add_command(scheduler_command)
 
 
 @cli.command("init")

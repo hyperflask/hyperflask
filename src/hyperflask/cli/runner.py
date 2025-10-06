@@ -4,6 +4,7 @@ import os
 import sys
 import multiprocessing
 import gunicorn.app.base
+from honcho.manager import Manager as BaseProcessManager
 from ..factory import load_config
 from . import reloader # import hacky patch of werkzeug reloader
 
@@ -43,7 +44,6 @@ serve_command.params = flask_run_command.params + serve_command.params
 @click.option("--dev", is_flag=True)
 def run_command(processes, host, port, concurrency, extend_procfile, dev):
     from honcho.command import _procfile, _parse_concurrency
-    from honcho.manager import Manager
     from honcho.printer import Printer
     from honcho import environ
 
@@ -61,24 +61,27 @@ def run_command(processes, host, port, concurrency, extend_procfile, dev):
             _processes = {}
         _processes.update({
             "web": [sys.argv[0], "serve", "--host", host, "--port", "$PORT"],
-            # "worker": [sys.argv[0], "worker"],
-            # "scheduler": [sys.argv[0], "periodiq"]
+            "worker": [sys.argv[0], "worker"],
+            "scheduler": [sys.argv[0], "scheduler"]
         })
         if dev:
             _processes["assets"] = [sys.argv[0], "assets", "dev"]
+            _processes["worker"].extend(["-p", "1", "-t", "1"])
         else:
             _processes["mercurehub"] = [sys.executable, "-m", "flask_mercure_sse.server"]
 
     processes = {name: " ".join(_processes[name]) if isinstance(_processes[name], list) else _processes[name]
                  for name in _processes if name in _processes}
 
-    manager = Manager(Printer(sys.stdout, colour=True))
+    manager = ProcessManager(Printer(sys.stdout, colour=True))
 
     for p in environ.expand_processes(processes,
                                       concurrency=_parse_concurrency(concurrency),
                                       port=port):
         e = os.environ.copy()
         e.update(p.env)
+        if p.name != "scheduler":
+            e["FLASK_SKIP_DB_INIT"] = "0"
         manager.add_process(p.name, p.cmd, quiet=p.quiet, env=e)
 
     manager.loop()
@@ -95,6 +98,15 @@ def dev_command(ctx, **kwargs):
 
 
 dev_command.params = list(run_command.params)
+
+
+class ProcessManager(BaseProcessManager):
+    # This override prevents the manager to stop if the worker and scheduler exit because dramatiq is unused
+    def _any_stopped(self):
+        def has_exited_because_dramatiq_unavailable(name, p):
+            return name.split('.')[0] in ('scheduler', 'worker') and p.get('returncode') == 10
+        return any(not has_exited_because_dramatiq_unavailable(name, p) and p.get('returncode') is not None
+                   for name, p in self._processes.items())
 
 
 class GunicornServer(gunicorn.app.base.BaseApplication):

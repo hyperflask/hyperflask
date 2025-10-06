@@ -54,6 +54,8 @@ class Model(BaseModel, abc.ABC):
 
 
 def init_db_locked(app):
+    if os.getenv("FLASK_SKIP_DB_INIT", "1") == "0":
+        return False
     # this is required because multiple app process will start at the same time using the runner
     lockfile = os.path.join(app.root_path, ".initdblock")
     if os.path.exists(lockfile):
@@ -67,3 +69,8 @@ def init_db_locked(app):
     finally:
         os.remove(lockfile)
     return True
+
+
+class UndefinedDatabase:
+    def __getattr__(self, item):
+        raise RuntimeError("No database defined for the application.")

@@ -38,4 +38,4 @@ class ReactAdapter(JsxComponentAdapter):
 
     @classmethod
     def matches(cls, app, module_name, template):
-        return template.endswith(".jsx") or template.endswith(".tsx")
+        return template and (template.endswith(".jsx") or template.endswith(".tsx"))

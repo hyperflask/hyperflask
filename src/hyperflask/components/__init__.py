@@ -25,9 +25,10 @@ def discover_components(app, path=None, package_name=None):
 
     loader = jinjapy.register_package(package_name, path, env=app.jinja_env)
     for module_name, template in loader.list_files(module_with_package=False):
+        filename = template or (loader.prefix + module_name.replace(".", os.sep) + ".py")
         adapter_class = None
         for pattern, adapter_import_path in force_adapters.items():
-            if re.match(pattern, template):
+            if re.match(pattern, filename):
                 adapter_module, adapter_classname = adapter_import_path.split(":")
                 adapter_class = getattr(importlib.import_module(adapter_module), adapter_classname)
                 break
@@ -40,8 +41,8 @@ def discover_components(app, path=None, package_name=None):
             if not matches:
                 continue
         if adapter_class:
-            name = os.path.basename(template).split(".")[0].replace("-", "_")
-            adapter = adapter_class(name, f"{package_name}.{module_name}" if module_name else None, template)
+            name = (os.path.basename(template).split(".")[0] if template else module_name.split('.')[-1]).replace("-", "_")
+            adapter = adapter_class(name, f"{package_name}.{module_name}" if module_name else None, template, filename)
             components.append(adapter)
 
     return loader, components

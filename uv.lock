@@ -451,6 +451,18 @@ wheels = [
 ]
 
 [[package]]
+name = "dramatiq-sqlite"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dramatiq" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/1d/eb/b7bedfde9c82d59291068d99b98e35f71b0168b205c10bd949fbdcd049ab/dramatiq_sqlite-0.1.0.tar.gz", hash = "sha256:1ac4ab54b0333781b3797c25436df6efdfd21b4b8b75c1c18af817edd24f6f9c", size = 3517, upload-time = "2025-10-07T08:47:26.68Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7b/03/4c200e747f6e1a4ae97852287b939d37bed74c14786c70ace99965fc56ca/dramatiq_sqlite-0.1.0-py3-none-any.whl", hash = "sha256:0a77be99cc70eda6b3fa1f8e26ccb82bdb63e20589646391e96764b573c7190a", size = 4303, upload-time = "2025-10-07T08:47:25.751Z" },
+]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -546,14 +558,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/18/0b/19a29b9354b3c00102a475791093358a30afba43e8b676294e7d01964592/flask_debugtoolbar-0.16.0.tar.gz", hash = "sha256:3b925d4dcc09205471e5021019dfeb0eb6dabd6c184de16a3496dfb1f342afe1", size = 335258, upload-time = "2024-09-28T14:55:35.345Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a2/17/f2a647152315561787d2dfc7dcaf452ec83930a31de9d083a7094da404de/flask_debugtoolbar-0.16.0-py3-none-any.whl", hash = "sha256:2857a58ef20b88cf022a88bb7f0c6f6be1fb91a2e8b2d9fcc9079357a692083e", size = 413047, upload-time = "2024-09-28T14:55:33.928Z" },
-]
-
-[[package]]
-name = "flask-dramatiq"
-version = "0.6.0"
-source = { git = "https://gitlab.com/bersace/flask-dramatiq#a45af5315c2a2a7d35e084a9193f0f43888aa6b7" }
-dependencies = [
-    { name = "dramatiq" },
 ]
 
 [[package]]
@@ -656,15 +660,15 @@ wheels = [
 
 [[package]]
 name = "flask-super-macros"
-version = "0.1.0"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "flask" },
     { name = "jinja-super-macros" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/10/da/c8bb067cffd007ff704268693c2af37c1e7ecf204369a293e80657914d87/flask_super_macros-0.1.0.tar.gz", hash = "sha256:4e80bed45ffbe53ab9544f9a3f2918cb7c14bb6359ccb8033556db763db50cff", size = 2945, upload-time = "2024-09-02T22:07:08.387Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/84/5d/79ce3dbee3ef7d01389ba9caf053d3ee64b3ae6ad8402896368e38f1b3d9/flask_super_macros-0.2.0.tar.gz", hash = "sha256:0e93591823ee0ee25716f9b4f6a07bb2586f1ef1b697fdbde52d96d44362d1fc", size = 2422, upload-time = "2025-10-07T10:13:47.563Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/82/26/d4c6a1576812c308974f96be6549b7af8cdb30253bd2d2fef0accb5b94c0/flask_super_macros-0.1.0-py3-none-any.whl", hash = "sha256:1ef9aa6d72202c9dbad517954ca0c05ca1228ae172348a800539b3d9c77e6e4c", size = 3707, upload-time = "2024-09-02T22:07:07.197Z" },
+    { url = "https://files.pythonhosted.org/packages/89/64/0bfd0a639f756ecae22e0cfd385573e519fd9100a92a3627cfa74d866c06/flask_super_macros-0.2.0-py3-none-any.whl", hash = "sha256:dd0e95e424862e3016ebdc4347ef9d23f37bdd1e95a1ca6dbacefeb39fb18b0a", size = 3439, upload-time = "2025-10-07T10:13:46.756Z" },
 ]
 
 [[package]]
@@ -987,16 +991,17 @@ wheels = [
 
 [[package]]
 name = "hyperflask"
-version = "0.3.1"
+version = "0.4.0"
 source = { editable = "." }
 dependencies = [
+    { name = "dramatiq" },
+    { name = "dramatiq-sqlite" },
     { name = "flask" },
     { name = "flask-assets-pipeline" },
     { name = "flask-babel-hyper" },
     { name = "flask-collections" },
     { name = "flask-configurator" },
     { name = "flask-debugtoolbar" },
-    { name = "flask-dramatiq" },
     { name = "flask-file-routes" },
     { name = "flask-files" },
     { name = "flask-geo" },
@@ -1015,7 +1020,6 @@ dependencies = [
     { name = "jinja-wtforms" },
     { name = "periodiq" },
     { name = "python-slugify" },
-    { name = "redis" },
     { name = "watchdog" },
 ]
 
@@ -1028,20 +1032,21 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "dramatiq", specifier = ">=1.18.0" },
+    { name = "dramatiq-sqlite", specifier = "~=0.1" },
     { name = "flask", specifier = ">=3.0.0,<4.0.0" },
     { name = "flask-assets-pipeline", specifier = "~=0.7" },
     { name = "flask-babel-hyper", specifier = "~=5.1" },
     { name = "flask-collections", specifier = "~=0.2" },
     { name = "flask-configurator", specifier = "~=0.1" },
     { name = "flask-debugtoolbar", specifier = "~=0.16" },
-    { name = "flask-dramatiq", git = "https://gitlab.com/bersace/flask-dramatiq" },
     { name = "flask-file-routes", specifier = "~=0.3" },
     { name = "flask-files", specifier = "~=0.2" },
     { name = "flask-geo", specifier = "~=0.1" },
     { name = "flask-mailman-templates", specifier = "~=0.1" },
     { name = "flask-mercure-sse", specifier = "~=0.3" },
     { name = "flask-sqlorm", specifier = "~=0.3" },
-    { name = "flask-super-macros", specifier = "~=0.1" },
+    { name = "flask-super-macros", specifier = "~=0.2" },
     { name = "flask-suspense", specifier = "~=0.1" },
     { name = "flask-wtf", specifier = "~=1.2" },
     { name = "frozen-flask", specifier = "~=1.0" },
@@ -1053,7 +1058,6 @@ requires-dist = [
     { name = "jinja-wtforms", specifier = "~=0.2" },
     { name = "periodiq", git = "https://gitlab.com/bersace/periodiq" },
     { name = "python-slugify", specifier = "~=8.0.4" },
-    { name = "redis", specifier = "~=6.4" },
     { name = "watchdog", specifier = ">=6.0.0" },
 ]
 
@@ -1949,18 +1953,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/fe/0f/25911a9f080464c59fab9027482f822b86bf0608957a5fcc6eaac85aa515/PyYAML-6.0.2-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:68ccc6023a3400877818152ad9a1033e3db8625d899c72eacb5a668902e4d652", size = 751597, upload-time = "2024-08-06T20:32:56.985Z" },
     { url = "https://files.pythonhosted.org/packages/14/0d/e2c3b43bbce3cf6bd97c840b46088a3031085179e596d4929729d8d68270/PyYAML-6.0.2-cp313-cp313-win32.whl", hash = "sha256:bc2fa7c6b47d6bc618dd7fb02ef6fdedb1090ec036abab80d4681424b84c1183", size = 140527, upload-time = "2024-08-06T20:33:03.001Z" },
     { url = "https://files.pythonhosted.org/packages/fa/de/02b54f42487e3d3c6efb3f89428677074ca7bf43aae402517bc7cca949f3/PyYAML-6.0.2-cp313-cp313-win_amd64.whl", hash = "sha256:8388ee1976c416731879ac16da0aff3f63b286ffdd57cdeb95f3f2e085687563", size = 156446, upload-time = "2024-08-06T20:33:04.33Z" },
-]
-
-[[package]]
-name = "redis"
-version = "6.4.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "async-timeout", marker = "python_full_version < '3.11.3'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/0d/d6/e8b92798a5bd67d659d51a18170e91c16ac3b59738d91894651ee255ed49/redis-6.4.0.tar.gz", hash = "sha256:b01bc7282b8444e28ec36b261df5375183bb47a07eb9c603f284e89cbc5ef010", size = 4647399, upload-time = "2025-08-07T08:10:11.441Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e8/02/89e2ed7e85db6c93dfa9e8f691c5087df4e3551ab39081a4d7c6d1f90e05/redis-6.4.0-py3-none-any.whl", hash = "sha256:f0544fa9604264e9464cdf4814e7d4830f74b165d52f2a330a760a88dd248b7f", size = 279847, upload-time = "2025-08-07T08:10:09.84Z" },
 ]
 
 [[package]]

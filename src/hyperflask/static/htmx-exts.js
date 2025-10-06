@@ -107,16 +107,19 @@ htmx.defineExtension("hx-active-url", {
 });
 
 htmx.defineExtension("hx-stream", {
-  getSelectors() {
-    return ['[hx-stream]'];
-  },
   onEvent: function (name, evt) {
-    if (name === "htmx:beforeRequest" && evt.target.hasAttribute("hx-stream")) {
+    if (name === "htmx:beforeRequest") {
       const target = evt.detail.target;
       const xhr = evt.detail.xhr;
+      let stream = false;
       xhr.addEventListener('readystatechange', function () {
-        if (xhr.readyState === 2 || xhr.readyState === 3) {
+        if (xhr.readyState == xhr.HEADERS_RECEIVED && xhr.getResponseHeader('x-suspense') === '1') {
+          stream = true;
           target.innerHTML = xhr.responseText;
+        } else if (xhr.readyState === xhr.LOADING && stream) {
+          target.innerHTML = xhr.responseText;
+        } else if (xhr.readyState === xhr.DONE) {
+          stream = false;
         }
       });
     }

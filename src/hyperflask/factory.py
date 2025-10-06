@@ -62,6 +62,7 @@ def create_app(root_path=None):
 
     models = try_import(app, "models")
     try_import(app, "routes")
+    try_import(app, "actors")
     try_import(app, "tasks")
     try_import(app, "cron")
     try_import(app, "cli")

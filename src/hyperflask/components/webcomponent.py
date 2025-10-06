@@ -8,7 +8,7 @@ import os
 class WebComponentAdapter(BaseComponentAdapter):
     @classmethod
     def matches(cls, app, module_name, template):
-        return template.endswith(".js") or template.endswith(".ts")
+        return template and (template.endswith(".js") or template.endswith(".ts"))
 
     def register(self, app, url_prefix):
         super().register(app, url_prefix)

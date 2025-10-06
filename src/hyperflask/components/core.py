@@ -6,6 +6,7 @@ from flask_suspense import render_template
 from jinjapy import extract_frontmatter
 import importlib
 import re
+import os
 
 
 class BaseComponentAdapter:
@@ -13,10 +14,11 @@ class BaseComponentAdapter:
     def matches(cls, app, module_name, template):
         return False
 
-    def __init__(self, name, module_name, template):
+    def __init__(self, name, module_name, template, filename):
         self.name = name
         self.module_name = module_name
         self.template = template
+        self.filename = filename
 
     def register(self, app, url_prefix):
         app.macros.create_from_func(self.render, self.name, receive_caller=True)
@@ -37,46 +39,62 @@ class ComponentAdapter(BaseComponentAdapter):
         if not self.module_name:
             return
         url = url_prefix + self.name.replace("_", "/")
+        methods = self.find_supported_http_methods(app)
+        if methods:
+            app.add_url_rule(url, self.name, view_func=self.view_func, methods=methods)
 
-        # avoid importing the module early
-        # need to read from filename otherwise frontmatter will be stripped
-        filename = app.jinja_env.loader.get_source(app.jinja_env, self.template)[1]
-        with open(filename) as f:
-            source = extract_frontmatter(f.read())[1]
-            methods = [m.upper() for m in http_method_funcs if re.search(rf"^(def\s+{m}\()|{m}\s*=", source, re.MULTILINE)]
-
-        def view_func():
-            props = {}
-            page.template = self.template
-            module = importlib.import_module(self.module_name)
-            m = getattr(module, request.method.lower(), None)
-            if m:
-                props = m()
-                if props is not None and not isinstance(props, dict):
-                    return props
-                if not props:
-                    props = {}
+    def view_func(self):
+        props = {}
+        page.template = self.template
+        module = importlib.import_module(self.module_name)
+        m = getattr(module, request.method.lower(), None)
+        if m:
+            props = m()
+            if props is not None and not isinstance(props, dict):
+                return props
+            if not props:
+                props = {}
+        if self.template:
             ctx = self.get_render_context(None, **props)
             return render_template(self.template, **ctx)
+        if "render" in dir(module):
+            return module.render(**props)
+        return ""
 
-        if methods:
-            app.add_url_rule(url, self.name, view_func=view_func, methods=methods)
+    def find_supported_http_methods(self, app):
+        # avoid importing the module early
+        # need to read from filename otherwise frontmatter will be stripped
+        filename = app.jinja_env.loader.get_source(app.jinja_env, self.filename)[1]
+        with open(filename) as f:
+            source, frontmatter = extract_frontmatter(f.read())
+            if not self.template:
+                frontmatter = source
+            return [m.upper() for m in http_method_funcs if re.search(rf"^(def\s+{m}\()|{m}\s*=", frontmatter, re.MULTILINE)]
+        return []
+
+    def render(self, *args, **kwargs):
+        caller = kwargs.pop('caller', None)
+        if not self.template:
+            if caller:
+                kwargs['caller'] = caller
+            return Markup(self.call_render_func(*args, **kwargs) or "")
+        tpl = current_app.jinja_env.get_template(self.template)
+        ctx = self.get_render_context(caller, *args, **kwargs)
+        return Markup(tpl.render(ctx)) # do not use render_template() so we don't trigger flask signals
 
     def get_render_context(self, caller, *args, **kwargs):
         ctx = kwargs.pop('_ctx', {})
         ctx.update(dict(args=args, kwargs=kwargs, props=PropsWrapper(kwargs), caller=caller, children=caller))
+        _ctx = self.call_render_func(*args, **kwargs)
+        if _ctx:
+            ctx.update(_ctx)
+        return ctx
+
+    def call_render_func(self, *args, **kwargs):
         if self.module_name:
             module = importlib.import_module(self.module_name)
             if module and "render" in dir(module):
-                _ctx = module.render(*args, **kwargs)
-                if _ctx:
-                    ctx.update(_ctx)
-        return ctx
-
-    def render(self, caller, *args, **kwargs):
-        tpl = current_app.jinja_env.get_template(self.template)
-        ctx = self.get_render_context(caller, *args, **kwargs)
-        return Markup(tpl.render(**ctx)) # do not use render_template() so we don't trigger flask signals
+                return module.render(*args, **kwargs)
 
 
 class PropsWrapper:

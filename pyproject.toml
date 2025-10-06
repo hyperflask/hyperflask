@@ -1,6 +1,6 @@
 [project]
 name = "hyperflask"
-version = "0.3.1"
+version = "0.4.0"
 description = "Full stack web framework"
 authors = [
     {"name" = "Maxime Bouroumeau-Fuseau", email = "maxime.bouroumeau@gmail.com"}
@@ -15,7 +15,6 @@ dependencies = [
     "flask-collections ~=0.2",
     "flask-configurator ~=0.1",
     "flask-debugtoolbar ~=0.16",
-    "flask-dramatiq ~=0.6",
     "flask-file-routes ~=0.3",
     "flask-files ~=0.2",
     "flask-geo ~=0.1",
@@ -23,11 +22,12 @@ dependencies = [
     "flask-mercure-sse ~=0.3",
     #"flask-observability ~=0.1"
     "flask-sqlorm ~=0.3",
-    "flask-super-macros ~=0.1",
-    "flask-suspense ~=0.1",
+    "flask-super-macros ~=0.2",
+    "flask-suspense ~=0.3",
     "flask-wtf ~=1.2",
     "frozen-flask ~=1.0",
-    #"dramatiq-sqlite ~=0.1"
+    "dramatiq>=1.18.0",
+    "dramatiq-sqlite ~=0.1",
     "gunicorn ~=23.0",
     "honcho ~=2.0",
     "html-sanitizer ~=2.6",
@@ -36,12 +36,10 @@ dependencies = [
     "jinja-wtforms ~=0.2",
     "periodiq ~=0.13",
     "python-slugify ~=8.0.4",
-    "redis ~=6.4",
     "watchdog>=6.0.0",
 ]
 
 [tool.uv.sources]
-flask-dramatiq = { git = "https://gitlab.com/bersace/flask-dramatiq" }
 periodiq = { git = "https://gitlab.com/bersace/periodiq" }
 
 [project.urls]
