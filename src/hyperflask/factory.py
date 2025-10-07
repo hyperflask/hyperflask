@@ -4,7 +4,7 @@ from importlib.metadata import entry_points
 import logging
 import os
 from .app import Hyperflask
-from .model import init_db_locked
+
 
 app = None
 db = None
@@ -13,9 +13,7 @@ db = None
 def load_config(root_path=None):
     debug = os.environ.get("FLASK_DEBUG") == "1"
     default_env = "development" if debug else "production"
-    config = Config(root_path, defaults={
-        "SQLORM_URI": "sqlite://app.db"
-    })
+    config = Config(root_path)
     config.load("config.yml", default_env)
     if config["ENV"] == "development" and not config.get("SECRET_KEY"):
         logging.getLogger().warn("Missing SECRET_KEY has been automatically set to 'changeme' while in development mode")
@@ -41,8 +39,8 @@ def create_app(root_path=None):
     else:
         import_name = "__main__"
 
-    app = Hyperflask(import_name, root_path=root_path, config=config, static_folder=static_folder,
-                     static_url_path=config.get("STATIC_URL_PATH", "/static"),
+    app = Hyperflask(import_name, root_path=root_path, config_filename=None, config=config,
+                     static_folder=static_folder, static_url_path=config.get("STATIC_URL_PATH", "/static"),
                      migrations_folder=migrations_folder)
 
     db = app.db
@@ -60,7 +58,7 @@ def create_app(root_path=None):
         m = importlib.import_module(module)
         getattr(m, class_name)(app, **config)
 
-    models = try_import(app, "models")
+    try_import(app, "models")
     try_import(app, "routes")
     try_import(app, "actors")
     try_import(app, "tasks")
@@ -68,9 +66,6 @@ def create_app(root_path=None):
     try_import(app, "cli")
     try_import(app, "signals")
     try_import(app, "app")
-
-    if models and app.config.get("INIT_DATABASE", True):
-        init_db_locked(app)
 
     return app
 

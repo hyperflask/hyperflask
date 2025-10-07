@@ -4,6 +4,7 @@ import os
 import sys
 import multiprocessing
 import gunicorn.app.base
+from subprocess import Popen
 from honcho.manager import Manager as BaseProcessManager
 from ..factory import load_config
 from . import reloader # import hacky patch of werkzeug reloader
@@ -21,8 +22,6 @@ def serve_command(ctx, info, host, port, gunicorn_opt, **run_kwargs):
             'proc_name': 'hyperflask',
             'bind': f'{host}:{port}',
             'workers': 1 + multiprocessing.cpu_count() * 2,
-            'accesslog': '-',
-            'errorlog': '-',
             'max_requests': 1000,
             'max_requests_jitter': 100
         }
@@ -41,14 +40,19 @@ serve_command.params = flask_run_command.params + serve_command.params
 @click.option("--port", "-p", default=5000, help="The port to bind to.")
 @click.option('--concurrency')
 @click.option("--extend-procfile")
+@click.option("--init-db/--no-init-db", is_flag=True, default=None)
 @click.option("--dev", is_flag=True)
-def run_command(processes, host, port, concurrency, extend_procfile, dev):
+def run_command(processes, host, port, concurrency, extend_procfile, init_db, dev):
     from honcho.command import _procfile, _parse_concurrency
     from honcho.printer import Printer
     from honcho import environ
 
     if dev:
         os.environ["FLASK_DEBUG"] = "1"
+
+    if init_db is None and dev or init_db:
+        print("Initializing database...")
+        Popen([sys.argv[0], "db", "init"]).wait()
 
     _processes = None
     config = load_config()
@@ -69,9 +73,19 @@ def run_command(processes, host, port, concurrency, extend_procfile, dev):
             _processes["worker"].extend(["-p", "1", "-t", "1"])
         else:
             _processes["mercurehub"] = [sys.executable, "-m", "flask_mercure_sse.server"]
+            subscriber_secret_key = config.get("MERCURE_SUBSCRIBER_SECRET_KEY", config.get('SECRET_KEY'))
+            if subscriber_secret_key:
+                _processes["mercurehub"].extend(["--subscriber-secret", subscriber_secret_key])
+            else:
+                print("Warning: No MERCURE_SUBSCRIBER_SECRET_KEY or SECRET_KEY set, Mercure subscriber will not be authenticated.")
+            publisher_secret_key = config.get("MERCURE_PUBLISHER_SECRET_KEY", config.get('SECRET_KEY'))
+            if publisher_secret_key:
+                _processes["mercurehub"].extend(["--publisher-secret", publisher_secret_key])
+            else:
+                print("Warning: No MERCURE_PUBLISHER_SECRET_KEY or SECRET_KEY set, cannot publish Mercure messages.")
 
     processes = {name: " ".join(_processes[name]) if isinstance(_processes[name], list) else _processes[name]
-                 for name in _processes if name in _processes}
+                 for name in _processes if not processes or name in processes}
 
     manager = ProcessManager(Printer(sys.stdout, colour=True))
 
@@ -80,10 +94,9 @@ def run_command(processes, host, port, concurrency, extend_procfile, dev):
                                       port=port):
         e = os.environ.copy()
         e.update(p.env)
-        if p.name != "scheduler":
-            e["FLASK_SKIP_DB_INIT"] = "0"
         manager.add_process(p.name, p.cmd, quiet=p.quiet, env=e)
 
+    print("Starting Hyperflask processes...")
     manager.loop()
     sys.exit(manager.returncode)
 

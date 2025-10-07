@@ -1,6 +1,6 @@
 [project]
 name = "hyperflask"
-version = "0.4.0"
+version = "0.4.1"
 description = "Full stack web framework"
 authors = [
     {"name" = "Maxime Bouroumeau-Fuseau", email = "maxime.bouroumeau@gmail.com"}
@@ -19,7 +19,7 @@ dependencies = [
     "flask-files ~=0.2",
     "flask-geo ~=0.1",
     "flask-mailman-templates ~=0.1",
-    "flask-mercure-sse ~=0.3",
+    "flask-mercure-sse ~=0.4",
     #"flask-observability ~=0.1"
     "flask-sqlorm ~=0.3",
     "flask-super-macros ~=0.2",

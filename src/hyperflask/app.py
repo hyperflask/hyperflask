@@ -1,5 +1,5 @@
 # flask
-from flask import Flask
+from flask import Flask, has_request_context, request
 from jinja2 import ChoiceLoader, FileSystemLoader, PrefixLoader, TemplateNotFound
 from werkzeug.middleware.proxy_fix import ProxyFix
 # hyperflask extensions
@@ -73,6 +73,7 @@ class Hyperflask(Flask):
             "SESSION_COOKIE_SAMESITE": "Lax",
             "SQLORM_URI": database_uri,
             # Hyperflask specific
+            "URL_FOR_SERVER_NAME": None,
             "LAYOUT": "layouts/default.html",
             "ALPINE": False,
             "STATIC_MODE": static_mode,
@@ -112,6 +113,9 @@ class Hyperflask(Flask):
                 'REMEMBER_COOKIE_SECURE': True
             })
             self.config.setdefault("HSTS_HEADER", "max-age=31556926; includeSubDomains") # 1 year
+
+        if (self.config['URL_FOR_SERVER_NAME'] or self.config.get('SERVER_NAME')) and not self.config.get('MERCURE_HUB_URL') and not self.config.get('MERCURE_PUBLIC_HUB_URL'):
+            self.config['MERCURE_PUBLIC_HUB_URL'] = True
 
         #self.otel = Observability(self)
 
@@ -246,6 +250,34 @@ class Hyperflask(Flask):
 
     def relative_import_name(self, name):
         return f"{self.import_name}.{name}" if self.import_name != "__main__" else name
+
+    @property
+    def base_url(self):
+        scheme = self.config.get('PREFERRED_URL_SCHEME', 'http')
+        if self.config.get('SERVER_NAME'):
+            return f"{scheme}://{self.config['SERVER_NAME']}"
+        if self.config['URL_FOR_SERVER_NAME']:
+            return f"{scheme}://{self.config['URL_FOR_SERVER_NAME']}"
+        if has_request_context():
+            return request.host_url
+        raise RuntimeError("No request context and no SERVER_NAME or URL_FOR_SERVER_NAME configured, cannot determine base_url")
+
+    def url_for(self, *args, **kwargs):
+        _external = kwargs.get("_external", False)
+        _scheme = kwargs.get("_scheme", None)
+        if _external and self.config['URL_FOR_SERVER_NAME']:
+            # we handle the host and scheme ourselves
+            kwargs['_external'] = False
+            kwargs.pop('_scheme', None)
+        else:
+            _external = False
+        url = super().url_for(*args, **kwargs)
+        if not _external:
+            return url
+        if not _scheme:
+            _scheme = self.config.get('PREFERRED_URL_SCHEME', 'http')
+        url = f"{_scheme}://{self.config['URL_FOR_SERVER_NAME']}{url}"
+        return url
 
 
 class HyperModuleView(ModuleView):
