@@ -58,7 +58,6 @@ A good part of these extensions is developed as part of the Hyperflask project. 
 | [Flask-Collections](https://github.com/hyperflask/flask-collections) | Manage collections of static content
 | [Flask-Configurator](https://github.com/hyperflask/flask-configurator) | File based configuration
 | [Flask-DebugToolbar](https://github.com/pallets-eco/flask-debugtoolbar) | Debug Toolbar
-| [Flask-Dramatiq](https://flask-dramatiq.readthedocs.io) | Background tasks powered by [Dramatiq](https://dramatiq.io/) |
 | [Flask-File-Routes](https://github.com/hyperflask/flask-file-routes) | File-based routing with a new file format combining python and jinja template in a single file
 | [Flask-Files](https://github.com/hyperflask/flask-files) | [Fsspec](https://filesystem-spec.readthedocs.io/en/latest/) based files management (upload, storage and image manipulation)
 | [Frozen-Flask](https://github.com/Frozen-Flask/Frozen) | Generate a static website from your Flask app |
