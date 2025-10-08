@@ -55,38 +55,41 @@ def run_command(processes, host, port, concurrency, extend_procfile, init_db, de
         print("Initializing database...")
         Popen([sys.argv[0], "db", "init"]).wait()
 
-    _processes = None
+    _processes = {}
+    procfile = None
     config = load_config()
 
     for filename in [f"Procfile.{config['ENV']}", "Procfile"]:
         if os.path.exists(filename):
             with open(filename) as f:
-                _processes = parse_procfile(f.read()).processes
+                procfile = parse_procfile(f.read()).processes
             break
 
-    if _processes is None or extend_procfile:
-        if not _processes:
-            _processes = {}
-        _processes.update({
-            "web": [sys.argv[0], "serve", "--host", host, "--port", "$PORT"],
-            "worker": [sys.argv[0], "worker"],
-            "scheduler": [sys.argv[0], "scheduler"]
-        })
-        if dev:
-            _processes["assets"] = [sys.argv[0], "assets", "dev"]
-            _processes["worker"].extend(["-p", "1", "-t", "1"])
+    _processes = {
+        "web": [sys.argv[0], "serve", "--host", host, "--port", "$PORT"],
+        "worker": [sys.argv[0], "worker"],
+        "scheduler": [sys.argv[0], "scheduler"]
+    }
+    if dev:
+        _processes["assets"] = [sys.argv[0], "assets", "dev"]
+        _processes["worker"].extend(["-p", "1", "-t", "1"])
+    else:
+        _processes["mercurehub"] = [sys.executable, "-m", "flask_mercure_sse.server", "--port", "$PORT"]
+        subscriber_secret_key = config.get("MERCURE_SUBSCRIBER_SECRET_KEY", config.get('SECRET_KEY'))
+        if subscriber_secret_key:
+            _processes["mercurehub"].extend(["--subscriber-secret", subscriber_secret_key])
         else:
-            _processes["mercurehub"] = [sys.executable, "-m", "flask_mercure_sse.server"]
-            subscriber_secret_key = config.get("MERCURE_SUBSCRIBER_SECRET_KEY", config.get('SECRET_KEY'))
-            if subscriber_secret_key:
-                _processes["mercurehub"].extend(["--subscriber-secret", subscriber_secret_key])
-            else:
-                print("Warning: No MERCURE_SUBSCRIBER_SECRET_KEY or SECRET_KEY set, Mercure subscriber will not be authenticated.")
-            publisher_secret_key = config.get("MERCURE_PUBLISHER_SECRET_KEY", config.get('SECRET_KEY'))
-            if publisher_secret_key:
-                _processes["mercurehub"].extend(["--publisher-secret", publisher_secret_key])
-            else:
-                print("Warning: No MERCURE_PUBLISHER_SECRET_KEY or SECRET_KEY set, cannot publish Mercure messages.")
+            print("Warning: No MERCURE_SUBSCRIBER_SECRET_KEY or SECRET_KEY set, Mercure subscriber will not be authenticated.")
+        publisher_secret_key = config.get("MERCURE_PUBLISHER_SECRET_KEY", config.get('SECRET_KEY'))
+        if publisher_secret_key:
+            _processes["mercurehub"].extend(["--publisher-secret", publisher_secret_key])
+        else:
+            print("Warning: No MERCURE_PUBLISHER_SECRET_KEY or SECRET_KEY set, cannot publish Mercure messages.")
+
+    if procfile and extend_procfile:
+        _processes.update(procfile)
+    elif procfile:
+        _processes = procfile
 
     processes = {name: " ".join(_processes[name]) if isinstance(_processes[name], list) else _processes[name]
                  for name in _processes if not processes or name in processes}

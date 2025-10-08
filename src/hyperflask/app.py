@@ -114,8 +114,9 @@ class Hyperflask(Flask):
             })
             self.config.setdefault("HSTS_HEADER", "max-age=31556926; includeSubDomains") # 1 year
 
-        if (self.config['URL_FOR_SERVER_NAME'] or self.config.get('SERVER_NAME')) and not self.config.get('MERCURE_HUB_URL') and not self.config.get('MERCURE_PUBLIC_HUB_URL'):
-            self.config['MERCURE_PUBLIC_HUB_URL'] = True
+        if not self.debug and not self.testing and not self.config.get('MERCURE_HUB_URL'):
+            self.config['MERCURE_HUB_URL'] = "http://localhost:5300/.well-known/mercure"
+            self.config.setdefault('MERCURE_PUBLIC_HUB_URL', True)
 
         #self.otel = Observability(self)
 
