@@ -4,6 +4,7 @@ from flask.views import http_method_funcs
 from flask_file_routes import page
 from flask_suspense import render_template
 from jinjapy import extract_frontmatter
+from ..utils.freezer import dynamic
 import importlib
 import re
 import os
@@ -43,6 +44,7 @@ class ComponentAdapter(BaseComponentAdapter):
         if methods:
             app.add_url_rule(url, self.name, view_func=self.view_func, methods=methods)
 
+    @dynamic
     def view_func(self):
         props = {}
         page.template = self.template

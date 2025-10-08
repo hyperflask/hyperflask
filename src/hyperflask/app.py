@@ -20,7 +20,6 @@ from flask_suspense import Suspense, render_template, suspense_before_render_tem
 #from flask_observability import Observability
 # 3rd party extensions
 from flask_wtf.csrf import CSRFProtect
-from flask_frozen import Freezer
 from htmx_flask import Htmx
 from flask_mailman import Mail
 from flask_debugtoolbar import DebugToolbarExtension
@@ -31,6 +30,7 @@ from .utils.htmx import htmx_oob, respond_with_flash_messages
 from .utils.markdown import jinja_markdown, MarkdownExtension
 from .utils.html import sanitize_html, nl2br
 from .utils.metadata import metadata_tags
+from .utils.freezer import StaticMode, Freezer, freezer_url_generator
 from .components import register_components
 from .model import Model, File as SQLFileType, UndefinedDatabase
 from .actors import AppContextMiddleware, discover_broker, make_actor_decorator
@@ -41,7 +41,6 @@ from jinja_super_macros.registry import FileLoader
 from jinja_wtforms.extractor import map_jinja_call_node_to_func
 from sqlorm.sql_template import SQLTemplate
 from periodiq import PeriodiqMiddleware
-import dramatiq
 import os
 
 
@@ -55,7 +54,7 @@ map_jinja_call_node_to_func(lazy_gettext, "lazy_gettext")
 class Hyperflask(Flask):
     config_class = Config
 
-    def __init__(self, *args, static_mode="hybrid", instrument=False, layouts_folder="layouts",
+    def __init__(self, *args, static_mode=StaticMode.DYNAMIC, instrument=False, layouts_folder="layouts",
                  emails_folder="emails", forms_folder="forms", assets_folder="assets", pages_folder="pages", migrations_folder="migrations",
                  config=None, config_filename="config.yml", database_uri=None, proxy_fix=True, **kwargs):
 
@@ -64,8 +63,12 @@ class Hyperflask(Flask):
             self.wsgi_app = ProxyFix(self.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
         self.config.update({
-            "FREEZER_DESTINATION": os.path.join(self.root_path, "_site"),
+            "FREEZER_DESTINATION": "_site",
             "FREEZER_STATIC_IGNORE": [],
+            "FREEZER_IGNORE_404_NOT_FOUND": True,
+            "FREEZER_IGNORE_MIMETYPE_WARNINGS": True,
+            "FREEZER_REDIRECT_POLICY": "ignore",
+            "FREEZER_DEFAULT_FILE_EXTENSION": "html",
             "WTF_CSRF_CHECK_DEFAULT": False,
             "OTEL_INSTRUMENT": instrument,
             "DEBUG_TB_INTERCEPT_REDIRECTS": False,
@@ -140,7 +143,7 @@ class Hyperflask(Flask):
         ])
 
         DebugToolbarExtension(self)
-        self.freezer = Freezer(self, with_no_argument_rules=False)
+        self.freezer = Freezer(self, with_no_argument_rules=False, log_url_for=self.config.get('FREEZER_LOG_URL_FOR', False))
         self.freezer.register_generator(lambda: freezer_url_generator(self))
         self.csrf = CSRFProtect(self)
         Htmx(self)
@@ -286,21 +289,3 @@ class HyperModuleView(ModuleView):
 
     def _render_template(self):
         return render_template(page.template)
-
-
-def static(func):
-    pass
-
-
-def dynamic(func=None, static_template=None):
-    def decorator(func):
-        pass
-    return decorator(func) if func else decorator
-
-
-def freezer_url_generator(app):
-    """URL generator for URL rules that take no arguments."""
-    for rule in app.url_map.iter_rules():
-        if not rule.arguments and 'GET' in rule.methods and not rule.endpoint.startswith('mercure'):
-            app.logger.info(rule.endpoint)
-            yield rule.endpoint, {}

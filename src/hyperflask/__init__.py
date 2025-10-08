@@ -1,6 +1,7 @@
 from flask import *
 from .app import Hyperflask
 from .utils.htmx import htmx_redirect, htmx_oob
+from .utils.freezer import StaticMode, static, dynamic
 from .security import csp_nonce
 
 # useful exports from hyperflask managed extensions

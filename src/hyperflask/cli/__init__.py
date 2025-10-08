@@ -4,6 +4,7 @@ from flask_assets_pipeline import cli as assets_cli
 import click
 from ..factory import create_app
 from ..security import generate_csp_policy
+from ..utils.freezer import StaticMode
 from .runner import serve_command, run_command, dev_command
 from .worker import worker_command, scheduler_command
 
@@ -31,22 +32,17 @@ def init_command():
     pass
 
 
-@cli.command("freeze")
-def freeze_command():
-    current_app.freezer.freeze()
-
-
 @cli.command("build")
 @click.pass_context
 def build_command(ctx):
     ctx.invoke(assets_cli.build)
-    ctx.invoke(freeze_command)
+    if StaticMode(current_app.config['STATIC_MODE']) != StaticMode.DYNAMIC:
+        current_app.freezer.freeze()
 
 
 @cli.command("csp-header")
 def csp_header_command():
     click.echo(generate_csp_policy())
-
 
 
 def main():

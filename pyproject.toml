@@ -1,6 +1,6 @@
 [project]
 name = "hyperflask"
-version = "0.4.3"
+version = "0.4.4"
 description = "Full stack web framework"
 authors = [
     {"name" = "Maxime Bouroumeau-Fuseau", email = "maxime.bouroumeau@gmail.com"}
@@ -12,7 +12,7 @@ dependencies = [
     "flask>=3.0.0,<4.0.0",
     "flask-assets-pipeline ~=0.7",
     "flask-babel-hyper ~=5.1",
-    "flask-collections ~=0.2",
+    "flask-collections ~=0.3",
     "flask-configurator ~=0.1",
     "flask-debugtoolbar ~=0.16",
     "flask-file-routes ~=0.3",
