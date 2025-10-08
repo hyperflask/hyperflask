@@ -39,11 +39,12 @@ serve_command.params = flask_run_command.params + serve_command.params
 @click.option("--host", "-h", default="127.0.0.1", help="The interface to bind to.")
 @click.option("--port", "-p", default=5000, help="The port to bind to.")
 @click.option('--concurrency')
-@click.option("--extend-procfile")
+@click.option("--extend-procfile", is_flag=True)
 @click.option("--init-db/--no-init-db", is_flag=True, default=None)
 @click.option("--dev", is_flag=True)
 def run_command(processes, host, port, concurrency, extend_procfile, init_db, dev):
-    from honcho.command import _procfile, _parse_concurrency
+    from honcho.command import _parse_concurrency
+    from honcho.environ import parse_procfile
     from honcho.printer import Printer
     from honcho import environ
 
@@ -56,10 +57,13 @@ def run_command(processes, host, port, concurrency, extend_procfile, init_db, de
 
     _processes = None
     config = load_config()
+
     for filename in [f"Procfile.{config['ENV']}", "Procfile"]:
         if os.path.exists(filename):
-            _processes = _procfile(filename).processes
+            with open(filename) as f:
+                _processes = parse_procfile(f.read()).processes
             break
+
     if _processes is None or extend_procfile:
         if not _processes:
             _processes = {}
