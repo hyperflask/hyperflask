@@ -31,6 +31,7 @@ from .utils.markdown import jinja_markdown, MarkdownExtension
 from .utils.html import sanitize_html, nl2br
 from .utils.metadata import metadata_tags
 from .utils.freezer import StaticMode, Freezer, freezer_url_generator
+from .utils.image import image_tag
 from .components import register_components
 from .model import Model, File as SQLFileType, UndefinedDatabase
 from .actors import AppContextMiddleware, discover_broker, make_actor_decorator
@@ -95,7 +96,9 @@ class Hyperflask(Flask):
             "CSP_FRAME_ANCESTORS": True,
             "CSP_FRAME_ANCESTORS_SAFE_ENDPOINTS": [],
             "REFERRER_POLICY": "strict-origin-when-cross-origin",
-            "HSTS_HEADER": False
+            "HSTS_HEADER": False,
+            "IMAGES_DEFAULT_LOADING": "lazy",
+            "IMAGES_DEFAULT_DECODING": "async",
         })
         if config:
             self.config.update(config)
@@ -126,8 +129,13 @@ class Hyperflask(Flask):
         self.jinja_env.add_extension(LayoutExtension)
         self.jinja_env.add_extension(WtformExtension)
         self.jinja_env.add_extension(MarkdownExtension)
-        self.jinja_env.filters.update(markdown=jinja_markdown, sanitize=sanitize_html, nl2br=nl2br)
-        self.jinja_env.globals.update(page_action_url=page_action_url, app=self, csp_nonce=csp_nonce, metadata_tags=metadata_tags)
+        self.jinja_env.filters.update(markdown=jinja_markdown,
+                                      sanitize=sanitize_html,
+                                      nl2br=nl2br)
+        self.jinja_env.globals.update(page_action_url=page_action_url,
+                                      app=self,
+                                      csp_nonce=csp_nonce,
+                                      metadata_tags=metadata_tags)
         self.jinja_env.form_base_cls = Form
         self.jinja_env.default_layout = self.config["LAYOUT"]
         self.forms = self.jinja_env.forms
@@ -197,6 +205,7 @@ class Hyperflask(Flask):
         if hasattr(file_routes, "loader"):
             self.forms.register_from_loader(file_routes.loader, "pages")
         self.macros.create_from_func(htmx_oob, "HtmxOob", receive_caller=True, caller_alias="html")
+        self.macros.create_from_func(image_tag, "Image")
 
         self.components_loader, _ = register_components(self)
         if self.components_loader:

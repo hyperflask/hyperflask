@@ -1,7 +1,7 @@
 from .core import BaseComponentAdapter
 from markupsafe import Markup
 from flask import current_app
-from flask_assets_pipeline import Entrypoint
+from flask_assets_pipeline import BundleEntrypoint
 import json
 import html
 
@@ -13,7 +13,7 @@ class JsxComponentAdapter(BaseComponentAdapter):
             app.assets.state.bundles["@components"] = []
             app.assets.include("@components")
         app.assets.state.bundles["@components"].append(
-            Entrypoint.create(self.template, from_package="jinja"))
+            BundleEntrypoint.create(self.template, from_package="jinja"))
         app.assets.include(self.include_js)
 
     def render(self, caller, *args, **kwargs):

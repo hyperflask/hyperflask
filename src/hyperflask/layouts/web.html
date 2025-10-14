@@ -5,7 +5,7 @@
         {% block head_metas %}
           {{ metadata_tags(page.get('metadata', {})) }}
         {% endblock %}
-        {% asset_tags nonce=csp_nonce %}
+        {% asset_tags(nonce=csp_nonce) %}
         {% block head_assets %}{% endblock %}
         {%- endblock %}
     </head>

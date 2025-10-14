@@ -1,6 +1,6 @@
 [project]
 name = "hyperflask"
-version = "0.4.4"
+version = "0.5.0"
 description = "Full stack web framework"
 authors = [
     {"name" = "Maxime Bouroumeau-Fuseau", email = "maxime.bouroumeau@gmail.com"}
@@ -10,7 +10,7 @@ license = "MIT"
 requires-python = ">=3.10"
 dependencies = [
     "flask>=3.0.0,<4.0.0",
-    "flask-assets-pipeline ~=0.7",
+    "flask-assets-pipeline ~=0.8",
     "flask-babel-hyper ~=5.1",
     "flask-collections ~=0.3",
     "flask-configurator ~=0.1",
@@ -37,6 +37,7 @@ dependencies = [
     "periodiq ~=0.13",
     "python-slugify ~=8.0.4",
     "watchdog>=6.0.0",
+    "pillow>=11.3.0",
 ]
 
 [tool.uv.sources]

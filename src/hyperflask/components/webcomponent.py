@@ -1,6 +1,6 @@
 from .core import BaseComponentAdapter
 from jinja_super_macros import html_tag
-from flask_assets_pipeline import Entrypoint
+from flask_assets_pipeline import BundleEntrypoint
 from markupsafe import Markup
 import os
 
@@ -17,7 +17,7 @@ class WebComponentAdapter(BaseComponentAdapter):
             app.assets.state.bundles["@components"] = []
             app.assets.include("@components")
         app.assets.state.bundles["@components"].append(
-            Entrypoint.create(os.path.abspath(tpl.filename), self.template))
+            BundleEntrypoint.create(os.path.abspath(tpl.filename), self.template))
 
     def render(self, caller, *args, **kwargs):
         tag_name = self.name.replace("_", "-")
