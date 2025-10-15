@@ -7,7 +7,6 @@ from jinjapy import extract_frontmatter
 from ..utils.freezer import dynamic
 import importlib
 import re
-import os
 
 
 class BaseComponentAdapter:
@@ -71,8 +70,9 @@ class ComponentAdapter(BaseComponentAdapter):
             source, frontmatter = extract_frontmatter(f.read())
             if not self.template:
                 frontmatter = source
+            if not frontmatter:
+                return []
             return [m.upper() for m in http_method_funcs if re.search(rf"^(def\s+{m}\()|{m}\s*=", frontmatter, re.MULTILINE)]
-        return []
 
     def render(self, *args, **kwargs):
         caller = kwargs.pop('caller', None)
