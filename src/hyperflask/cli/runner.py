@@ -12,9 +12,14 @@ from . import reloader # import hacky patch of werkzeug reloader
 
 @click.command("serve")
 @click.option('--gunicorn-opt', multiple=True)
+@click.option("--init-db", is_flag=True)
 @pass_script_info
 @click.pass_context
-def serve_command(ctx, info, host, port, gunicorn_opt, **run_kwargs):
+def serve_command(ctx, info, host, port, gunicorn_opt, init_db, **run_kwargs):
+    if init_db:
+        print("Initializing database...")
+        Popen([sys.argv[0], "db", "init"]).wait()
+
     if os.environ.get("FLASK_DEBUG") == "1":
         ctx.invoke(flask_run_command, host=host, port=port, **run_kwargs)
     else:
@@ -59,6 +64,10 @@ def run_command(processes, host, port, concurrency, extend_procfile, init_db, de
     procfile = None
     config = load_config()
 
+    if not dev and not config.get('SECRET_KEY'):
+        print("Critical: No SECRET_KEY set, cannot run in production mode.")
+        sys.exit(1)
+
     for filename in [f"Procfile.{config['ENV']}", "Procfile"]:
         if os.path.exists(filename):
             with open(filename) as f:
@@ -75,16 +84,6 @@ def run_command(processes, host, port, concurrency, extend_procfile, init_db, de
         _processes["worker"].extend(["-p", "1", "-t", "1"])
     else:
         _processes["mercurehub"] = [sys.executable, "-m", "flask_mercure_sse.server", "--port", "$PORT"]
-        subscriber_secret_key = config.get("MERCURE_SUBSCRIBER_SECRET_KEY", config.get('SECRET_KEY'))
-        if subscriber_secret_key:
-            _processes["mercurehub"].extend(["--subscriber-secret", subscriber_secret_key])
-        else:
-            print("Warning: No MERCURE_SUBSCRIBER_SECRET_KEY or SECRET_KEY set, Mercure subscriber will not be authenticated.")
-        publisher_secret_key = config.get("MERCURE_PUBLISHER_SECRET_KEY", config.get('SECRET_KEY'))
-        if publisher_secret_key:
-            _processes["mercurehub"].extend(["--publisher-secret", publisher_secret_key])
-        else:
-            print("Warning: No MERCURE_PUBLISHER_SECRET_KEY or SECRET_KEY set, cannot publish Mercure messages.")
 
     if procfile and extend_procfile:
         _processes.update(procfile)
@@ -93,13 +92,19 @@ def run_command(processes, host, port, concurrency, extend_procfile, init_db, de
 
     processes = {name: " ".join(_processes[name]) if isinstance(_processes[name], list) else _processes[name]
                  for name in _processes if not processes or name in processes}
+    env = {}
+    if not dev:
+        env = {
+            "MERCURE_SUBSCRIBER_SECRET_KEY": config.get("MERCURE_SUBSCRIBER_SECRET_KEY", config['SECRET_KEY']),
+            "MERCURE_PUBLISHER_SECRET_KEY": config.get("MERCURE_PUBLISHER_SECRET_KEY", config['SECRET_KEY']),
+        }
 
     manager = ProcessManager(Printer(sys.stdout, colour=True))
-
     for p in environ.expand_processes(processes,
                                       concurrency=_parse_concurrency(concurrency),
                                       port=port):
         e = os.environ.copy()
+        e.update(env)
         e.update(p.env)
         manager.add_process(p.name, p.cmd, quiet=p.quiet, env=e)
 
