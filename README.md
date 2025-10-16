@@ -38,7 +38,7 @@ Features and technologies:
 
 ## Project status
 
-**Hyperflask is being actively developed and is not yet ready to be used.**
+**Hyperflask is in BETA and can start to be used for non-critical production apps**
 
 Checkout the list of all the projects developed as part of the Hyperflask stack and their current development status on the [Hyperflask Github organization homepage](https://github.com/hyperflask).
 
