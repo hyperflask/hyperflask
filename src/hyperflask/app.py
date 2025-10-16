@@ -57,7 +57,7 @@ class Hyperflask(Flask):
 
     def __init__(self, *args, static_mode=StaticMode.DYNAMIC, instrument=False, layouts_folder="layouts",
                  emails_folder="emails", forms_folder="forms", assets_folder="assets", pages_folder="pages", migrations_folder="migrations",
-                 config=None, config_filename="config.yml", database_uri=None, proxy_fix=True, **kwargs):
+                 config=None, config_filename="config.yml", database_uri=None, proxy_fix=True, healthcheck_url="/healthcheck", **kwargs):
 
         super().__init__(*args, **kwargs)
         if proxy_fix:
@@ -99,6 +99,7 @@ class Hyperflask(Flask):
             "HSTS_HEADER": False,
             "IMAGES_DEFAULT_LOADING": "lazy",
             "IMAGES_DEFAULT_DECODING": "async",
+            "HEALTHCHECK_URL": healthcheck_url,
         })
         if config:
             self.config.update(config)
@@ -260,6 +261,17 @@ class Hyperflask(Flask):
                 return render_template("500.html"), 500
             except TemplateNotFound:
                 return self.make_response(("500 Internal Server Error", 500))
+
+        if self.config['HEALTHCHECK_URL']:
+            @self.route(self.config['HEALTHCHECK_URL'])
+            def healthcheck():
+                if not isinstance(self.db, UndefinedDatabase):
+                    try:
+                        with self.db as tx:
+                            tx.execute("SELECT 1")
+                    except Exception:
+                        return {"status": "error"}, 500
+                return {"status": "ok"}
 
     def relative_import_name(self, name):
         return f"{self.import_name}.{name}" if self.import_name != "__main__" else name

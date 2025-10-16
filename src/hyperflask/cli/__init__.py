@@ -7,6 +7,7 @@ from ..security import generate_csp_policy
 from ..utils.freezer import StaticMode
 from .runner import serve_command, run_command, dev_command
 from .worker import worker_command, scheduler_command
+from .scaffold import gen
 
 
 def _create_app():
@@ -25,11 +26,7 @@ cli.add_command(run_command)
 cli.add_command(dev_command)
 cli.add_command(worker_command)
 cli.add_command(scheduler_command)
-
-
-@cli.command("init")
-def init_command():
-    pass
+cli.add_command(gen)
 
 
 @cli.command("build")
