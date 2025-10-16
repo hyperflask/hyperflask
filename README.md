@@ -4,7 +4,7 @@
 
 **Full stack Python web framework to build websites and web apps with as little boilerplate as possible**
 
-[hyperflask.dev](https://hyperflask.dev) • [Get started](https://hyperflask.dev/getting-started) • [Docs](https://hyperflask.dev/guides) • [Example apps](https://github.com/hyperflask/examples)
+[hyperflask.dev](https://hyperflask.dev) • [Get started](https://hyperflask.dev/getting-started) • [Docs](https://hyperflask.dev/guides) • [Example app](https://github.com/hyperflask/getting-started)
 
 </div>
 
@@ -35,7 +35,6 @@ Features and technologies:
  - Dev environment based on [Development Containers](https://containers.dev/)
  - Optimized for VScode with breakpoint debugging for frontend and backend
  - [Mailpit](https://github.com/axllent/mailpit) for email testing
- - Deployments using [docker-web-deploy](https://github.com/hyperflask/docker-web-deploy)
 
 ## Project status
 
