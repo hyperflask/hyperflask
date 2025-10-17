@@ -76,5 +76,6 @@ A good part of these extensions is developed as part of the Hyperflask project. 
 1. Create your project directory: `mkdir example-project && cd example-project`
 2. Create and activate a virtualenv: `python -m venv .venv && source .venv/bin/activate`
 3. `pip install hyperflask`
-4. Run `hyperflask init .`
-5. Start a development server using `hyperflask dev`
+5. Run `npm install esbuild tailwindcss @tailwindcss/cli htmx.org htmx-ext-sse bootstrap-icons daisyui`
+4. Run `mkdir pages && echo "Hello world" > pages/index.jpy`
+6. Start a development server using `hyperflask dev`
