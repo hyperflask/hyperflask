@@ -1,6 +1,6 @@
 [project]
 name = "hyperflask"
-version = "0.5.2"
+version = "0.6.0"
 description = "Full stack web framework"
 authors = [
     {"name" = "Maxime Bouroumeau-Fuseau", email = "maxime.bouroumeau@gmail.com"}
@@ -9,7 +9,7 @@ readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 dependencies = [
-    "flask>=3.0.0,<4.0.0",
+    "flask>=3.1.0,<4.0.0",
     "flask-assets-pipeline ~=0.8",
     "flask-babel-hyper ~=5.1",
     "flask-collections ~=0.3",
@@ -17,7 +17,6 @@ dependencies = [
     "flask-debugtoolbar ~=0.16",
     "flask-file-routes ~=0.3",
     "flask-files ~=0.2",
-    "flask-geo ~=0.1",
     "flask-mailman-templates ~=0.1",
     "flask-mercure-sse ~=0.4",
     #"flask-observability ~=0.1"
@@ -48,6 +47,9 @@ Repository = "https://github.com/hyperflask/hyperflask"
 
 [project.scripts]
 hyperflask = "hyperflask.cli:main"
+
+[project.entry-points."flask_collections"]
+model = "hyperflask.model:ModelCollection"
 
 [dependency-groups]
 dev = [

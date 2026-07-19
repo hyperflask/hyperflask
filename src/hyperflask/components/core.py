@@ -107,3 +107,6 @@ class PropsWrapper:
         if name in self._props:
             return self._props[name]
         raise Exception(f"No such prop: {name}")
+
+    def get(self, name, default=None):
+        return self._props.get(name, default)

@@ -3,6 +3,8 @@ from .app import Hyperflask
 from .utils.htmx import htmx_redirect, htmx_oob
 from .utils.freezer import StaticMode, static, dynamic
 from .security import csp_nonce
+from .actors import actor, ActorGroup
+from .models import Model
 
 # useful exports from hyperflask managed extensions
 from flask_babel import gettext, _, pgettext, _p, ngettext, _n, npgettext, _np, lazy_gettext, _lazy
@@ -18,3 +20,4 @@ from htmx_flask import request, make_response
 from slugify import slugify
 from blinker import signal
 from periodiq import cron
+from sqlorm import transaction

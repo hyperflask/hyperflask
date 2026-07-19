@@ -27,6 +27,8 @@
 }
 
 .form-w-full {
+  width: 100%;
+  
   .input,
   .select,
   .textarea,

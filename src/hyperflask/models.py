@@ -1,12 +1,10 @@
+import abc
+from sqlorm import *
 from flask import current_app
 from flask_sqlorm import Model as BaseModel
 from flask_files import save_file, File
 from sqlorm.resultset import CompositeResultSet
-from sqlorm import SQLType
 from markupsafe import Markup
-import abc
-import os
-import fcntl
 
 
 File = SQLType("text", save_file, File.from_uri)
@@ -51,24 +49,6 @@ class Model(BaseModel, abc.ABC):
 
         props = {prop: self} if prop else {}
         return Markup(current_app.macros[macro](**props))
-
-
-def init_db_locked(app):
-    if os.getenv("FLASK_SKIP_DB_INIT", "1") == "0":
-        return False
-    # this is required because multiple app process will start at the same time using the runner
-    lockfile = os.path.join(app.root_path, ".initdblock")
-    if os.path.exists(lockfile):
-        return False
-    with open(lockfile, "w") as f:
-        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
-        f.write("lock\n")
-        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
-    try:
-        app.db.init_db()
-    finally:
-        os.remove(lockfile)
-    return True
 
 
 class UndefinedDatabase:

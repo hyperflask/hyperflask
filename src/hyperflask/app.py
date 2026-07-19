@@ -1,5 +1,6 @@
 # flask
-from flask import Flask, has_request_context, request
+from flask import Flask, has_request_context, request, current_app
+from flask.globals import _cv_app
 from jinja2 import ChoiceLoader, FileSystemLoader, PrefixLoader, TemplateNotFound
 from werkzeug.middleware.proxy_fix import ProxyFix
 # hyperflask extensions
@@ -11,7 +12,6 @@ from flask_collections import Collections
 from flask_file_routes import FileRoutes, ModuleView, page
 from flask_configurator import Config
 from flask_babel import Babel, _, _p, _n, _np, lazy_gettext
-from flask_geo import Geolocation
 from flask_files import Files
 from flask_sqlorm import FlaskSQLORM
 from flask_mercure_sse import MercureSSE
@@ -33,13 +33,14 @@ from .utils.metadata import metadata_tags
 from .utils.freezer import StaticMode, Freezer, freezer_url_generator
 from .utils.image import image_tag
 from .components import register_components
-from .model import Model, File as SQLFileType, UndefinedDatabase
-from .actors import AppContextMiddleware, discover_broker, make_actor_decorator
+from .models import Model, File as SQLFileType, UndefinedDatabase
+from .actors import AppContextMiddleware, discover_broker, actor
 from .security import respond_with_security_headers, csp_nonce
 from . import page_helpers
 # others
 from jinja_super_macros.registry import FileLoader
 from jinja_wtforms.extractor import map_jinja_call_node_to_func
+from sqlorm import transaction
 from sqlorm.sql_template import SQLTemplate
 from periodiq import PeriodiqMiddleware
 import os
@@ -77,7 +78,6 @@ class Hyperflask(Flask):
             "SESSION_COOKIE_SAMESITE": "Lax",
             "SQLORM_URI": database_uri,
             # Hyperflask specific
-            "URL_FOR_SERVER_NAME": None,
             "LAYOUT": "layouts/default.html",
             "ALPINE": False,
             "STATIC_MODE": static_mode,
@@ -151,7 +151,7 @@ class Hyperflask(Flask):
             PrefixLoader({"ui": FileSystemLoader(os.path.join(os.path.dirname(__file__), "ui"))})
         ])
 
-        DebugToolbarExtension(self)
+        HyperDebugToolbarExtension(self)
         self.freezer = Freezer(self, with_no_argument_rules=False, log_url_for=self.config.get('FREEZER_LOG_URL_FOR', False))
         self.freezer.register_generator(lambda: freezer_url_generator(self))
         self.csrf = CSRFProtect(self)
@@ -161,7 +161,6 @@ class Hyperflask(Flask):
         SuperMacros(self)
         self.components = self.macros # alias
         Babel(self, extract_locale_from_request="locale")
-        Geolocation(self)
         Files(self)
         MailTemplates(self, template_folder=emails_folder)
         file_routes = FileRoutes(self, pages_folder=pages_folder, module_view_class=HyperModuleView)
@@ -235,7 +234,9 @@ class Hyperflask(Flask):
             self.dramatiq_broker = broker_cls(url=broker_url)
             self.dramatiq_broker.add_middleware(AppContextMiddleware(self))
             self.dramatiq_broker.add_middleware(PeriodiqMiddleware())
-        self.actor = make_actor_decorator(self)
+            self.actor = actor.bind(self.dramatiq_broker)
+        else:
+            self.actor = actor
 
         Suspense(self, nonce_getter="csp_nonce()")
 
@@ -281,32 +282,39 @@ class Hyperflask(Flask):
         scheme = self.config.get('PREFERRED_URL_SCHEME', 'http')
         if self.config.get('SERVER_NAME'):
             return f"{scheme}://{self.config['SERVER_NAME']}"
-        if self.config['URL_FOR_SERVER_NAME']:
-            return f"{scheme}://{self.config['URL_FOR_SERVER_NAME']}"
         if has_request_context():
             return request.host_url
-        raise RuntimeError("No request context and no SERVER_NAME or URL_FOR_SERVER_NAME configured, cannot determine base_url")
+        raise RuntimeError("No request context and no SERVER_NAME configured, cannot determine base_url")
 
     def url_for(self, *args, **kwargs):
         _external = kwargs.get("_external", False)
-        _scheme = kwargs.get("_scheme", None)
-        if _external and self.config['URL_FOR_SERVER_NAME']:
-            # we handle the host and scheme ourselves
-            kwargs['_external'] = False
-            kwargs.pop('_scheme', None)
-        else:
-            _external = False
-        url = super().url_for(*args, **kwargs)
-        if not _external:
+        if not has_request_context() and not _external and not self.config.get('SERVER_NAME'):
+            self.config['SERVER_NAME'] = 'http://localhost:5000'
+            app_ctx = _cv_app.get(None)
+            if app_ctx is not None:
+                prev_url_adapter = app_ctx.url_adapter
+                app_ctx.url_adapter = self.create_url_adapter(None)
+            url = super().url_for(*args, **kwargs)
+            if app_ctx is not None:
+                app_ctx.url_adapter = prev_url_adapter
+            url = url[:len(self.config['SERVER_NAME']):]
+            self.config['SERVER_NAME'] = None
             return url
-        if not _scheme:
-            _scheme = self.config.get('PREFERRED_URL_SCHEME', 'http')
-        url = f"{_scheme}://{self.config['URL_FOR_SERVER_NAME']}{url}"
-        return url
+        return super().url_for(*args, **kwargs)
 
 
 class HyperModuleView(ModuleView):
-    module_globals = dict(ModuleView.module_globals, asset_url=asset_url, static_url=static_url)
+    module_globals = dict(ModuleView.module_globals,
+                          asset_url=asset_url,
+                          static_url=static_url,
+                          transaction=transaction)
 
     def _render_template(self):
         return render_template(page.template)
+
+
+class HyperDebugToolbarExtension(DebugToolbarExtension):
+    def _show_toolbar(self):
+        if current_app.config.get("DEBUG_TB_ENABLED", True) is False:
+            return False
+        return super()._show_toolbar()

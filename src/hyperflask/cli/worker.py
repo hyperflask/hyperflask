@@ -1,3 +1,4 @@
+import os
 import click
 import sys
 from flask import current_app
@@ -27,6 +28,8 @@ def worker_command(verbose, processes, threads, queues):
     """Run dramatiq workers.
     """
     check_dramatiq_availability()
+    current_app.sse.hub = None # SSE publishing request must go through the HTTP api from the worker
+    current_app.sse.state.hub_url = f"http://localhost:{os.environ['BASE_PORT']}/.well-known/mercure"
 
     parser = dramatiq_argument_parser()
 
@@ -37,9 +40,9 @@ def worker_command(verbose, processes, threads, queues):
         # global broker.
         __name__,
     ]
-    if verbose:
+    if verbose or current_app.debug:
         command += ["-v"]
-    if current_app.config['DEBUG']:
+    if current_app.debug:
         command += ["--watch", current_app.root_path]
 
     queues = queues.split(",") if queues else []

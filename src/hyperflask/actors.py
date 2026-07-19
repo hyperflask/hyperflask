@@ -1,6 +1,10 @@
 from threading import local
-from dramatiq import Middleware, actor
+import typing as t
 import importlib
+from datetime import timedelta
+from dramatiq import Middleware, actor as register_actor, Message
+from flask import has_app_context, current_app
+from sqlorm.helpers import after_commit as sqlorm_after_commit
 
 
 DRAMATIQ_BROKERS = {
@@ -29,15 +33,72 @@ def discover_broker(broker_cls=None, broker_url=None):
     return broker_cls, broker_url
 
 
-def make_actor_decorator(app):
-    def actor_decorator(**kw):
+class actor:
+    @classmethod
+    def bind(cls, broker):
+        return type('bound_actor', (cls,), {'__broker__': broker})
+
+    def __init__(self, *args, **kwargs):
+        self.actor_args = (args, kwargs)
+        self.fn = None
+        self.actor = None
+
+    def __call__(self, *args, **kwargs):
+        if not self.fn:
+            self.fn = args[0]
+            if getattr(self, '__broker__', None):
+                self.register(self.__broker__)
+            elif has_app_context() and getattr(current_app, 'dramatiq_broker', None):
+                self.register(current_app.dramatiq_broker)
+            return self
+        return self.fn(*args, **kwargs)
+
+    def register(self, broker):
+        self.actor = register_actor(broker=broker, *self.actor_args[0], **self.actor_args[1])(self.fn)
+
+    def __getattr__(self, name):
+        if self.actor:
+            return getattr(self.actor, name)
+        raise AttributeError(name)
+
+    def send(self, *args, **kwargs):
+        return self.send_with_options(args=args, kwargs=kwargs)
+
+    def send_with_options(
+        self,
+        *,
+        args: tuple = (),
+        kwargs: t.Optional[dict[str, t.Any]] = None,
+        delay: t.Optional[timedelta | int] = None,
+        after_commit: bool = True,
+        **options,
+    ) -> Message:
+        if not self.actor:
+            raise RuntimeError("No broker defined for Dramatiq actors.")
+
+        if isinstance(delay, timedelta):
+            delay = int(delay.total_seconds() * 1000)
+
+        message = self.actor.message_with_options(args=args, kwargs=kwargs, **options)
+
+        if after_commit:
+            sqlorm_after_commit(lambda: self.actor.broker.enqueue(message, delay=delay))
+            return message
+
+        return self.actor.broker.enqueue(message, delay=delay)
+
+
+class ActorGroup(list):
+    def actor(self, *args, **kwargs):
         def decorator(fn):
-            if getattr(app, 'dramatiq_broker', None):
-                kw['broker'] = app.dramatiq_broker
-                return actor(**kw)(fn)
-            return UndefinedBrokerActor(fn)
+            a = actor(*args, **kwargs)(fn)
+            self.append(a)
+            return a
         return decorator
-    return actor_decorator
+
+    def register(self, broker):
+        for a in self:
+            a.register(broker)
 
 
 class AppContextMiddleware(Middleware):
@@ -65,18 +126,3 @@ class AppContextMiddleware(Middleware):
             pass
 
     after_skip_message = after_process_message
-
-
-class UndefinedBrokerActor:
-    def __init__(self, fn):
-        self.fn = fn
-        self.__name__ = fn.__name__
-
-    def __call__(self, *args, **kwargs):
-        return self.fn(*args, **kwargs)
-
-    def send(self, *args, **kwargs):
-        raise RuntimeError("No broker defined for Dramatiq actors.")
-
-    def send_with_options(self, *args, **kwargs):
-        raise RuntimeError("No broker defined for Dramatiq actors.")

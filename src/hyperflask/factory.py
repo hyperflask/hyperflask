@@ -1,13 +1,15 @@
-from flask_configurator import Config
 import importlib
 from importlib.metadata import entry_points
 import logging
 import os
+import sys
+from flask_configurator import Config
+from flask_sqlorm import FlaskSQLORM
 from .app import Hyperflask
 
 
-app = None
-db = None
+app : Hyperflask = None
+db : FlaskSQLORM = None
 
 
 def load_config(root_path=None):
@@ -16,12 +18,12 @@ def load_config(root_path=None):
     config = Config(root_path)
     config.load("config.yml", default_env)
     if config["ENV"] == "development" and not config.get("SECRET_KEY"):
-        logging.getLogger().warn("Missing SECRET_KEY has been automatically set to 'changeme' while in development mode")
+        logging.getLogger().warning("Missing SECRET_KEY has been automatically set to 'changeme' while in development mode")
         config["SECRET_KEY"] = "changeme"
     return config
 
 
-def create_app(root_path=None):
+def create_app(root_path=None) -> Hyperflask:
     global app
     global db
     config = load_config(root_path)
@@ -30,6 +32,7 @@ def create_app(root_path=None):
 
     if root_path is None:
         root_path = os.getcwd()
+    sys.path.insert(0, root_path)
 
     if os.path.exists(os.path.join(root_path, "app")):
         static_folder = os.path.abspath(os.path.join(root_path, static_folder))
