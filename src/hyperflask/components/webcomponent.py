@@ -13,11 +13,10 @@ class WebComponentAdapter(BaseComponentAdapter):
     def register(self, app, url_prefix):
         super().register(app, url_prefix)
         tpl = app.jinja_env.get_template(self.template)
-        if "@components" not in app.assets.state.bundles:
-            app.assets.state.bundles["@components"] = []
-            app.assets.include("@components")
-        app.assets.state.bundles["@components"].append(
-            BundleEntrypoint.create(os.path.abspath(tpl.filename), self.template))
+        entry = BundleEntrypoint.create(os.path.abspath(tpl.filename), self.template)
+        app.assets.state.bundles.setdefault("@components", []).append(entry)
+        # include() expands bundles at call time, so each entry must be included individually
+        app.assets.include(str(entry))
 
     def render(self, caller, *args, **kwargs):
         tag_name = self.name.replace("_", "-")
