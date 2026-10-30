@@ -100,13 +100,31 @@ class ComponentAdapter(BaseComponentAdapter):
 
 
 class PropsWrapper:
+    # Not a Mapping subclass on purpose: methods like items() or values() would shadow props
+    # with the same name since jinja tries getattr() first. keys() and __getitem__() are enough for **props.
     def __init__(self, props):
         self._props = props
 
     def __getattr__(self, name):
-        if name in self._props:
+        if not name.startswith("_") and name in self._props:
             return self._props[name]
-        raise Exception(f"No such prop: {name}")
+        # AttributeError lets jinja fall back to __getitem__ which makes missing props undefined
+        raise AttributeError(f"No such prop: {name}")
+
+    def __getitem__(self, name):
+        return self._props[name]
+
+    def __contains__(self, name):
+        return name in self._props
+
+    def __iter__(self):
+        return iter(self._props)
+
+    def __len__(self):
+        return len(self._props)
+
+    def keys(self):
+        return self._props.keys()
 
     def get(self, name, default=None):
         return self._props.get(name, default)
