@@ -33,14 +33,11 @@ dependencies = [
     "htmx-flask ~=0.1",
     "jinja-layout ~=0.5",
     "jinja-wtforms ~=0.2",
-    "periodiq ~=0.13",
+    "periodiq ~=0.14",
     "python-slugify ~=8.0.4",
     "watchdog>=6.0.0",
     "pillow>=11.3.0",
 ]
-
-[tool.uv.sources]
-periodiq = { git = "https://gitlab.com/bersace/periodiq" }
 
 [project.urls]
 Repository = "https://github.com/hyperflask/hyperflask"
