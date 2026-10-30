@@ -47,6 +47,9 @@ def add_hx_trigger(response, event, data=None):
 def respond_with_flash_messages(response, only_if_htmx=True, target="#flash-messages-toast"):
     if only_if_htmx and not request.htmx:
         return response
+    if response.is_streamed:
+        # do not buffer streams (eg. sse connections made by htmx)
+        return response
 
     messages = []
     for category, message in get_flashed_messages(with_categories=True):
