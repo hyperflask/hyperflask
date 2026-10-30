@@ -16,7 +16,7 @@ from flask_files import Files
 from flask_sqlorm import FlaskSQLORM
 from flask_mercure_sse import MercureSSE
 from flask_mailman_templates import MailTemplates
-from flask_suspense import Suspense, render_template, suspense_before_render_template, suspense_before_render_macros
+from flask_suspense import Suspense, render_template, suspense_before_render_template, suspense_after_render_macros
 #from flask_observability import Observability
 # 3rd party extensions
 from flask_wtf.csrf import CSRFProtect
@@ -82,7 +82,7 @@ class Hyperflask(Flask):
             "ALPINE": False,
             "STATIC_MODE": static_mode,
             "ASSETS_INCLUDE_ALPINE": False,
-            "HTMX_EXT": [],
+            "HTMX_CONFIG": {},
             "HTMX_BOOST_SITE": False,
             "MARKDOWN_OPTIONS": {"extensions": ["fenced_code", "nl2br", "attr_list", "admonition", "codehilite"]},
             "MARKDOWN_SANITIZER_CONFIG": {},
@@ -111,6 +111,8 @@ class Hyperflask(Flask):
         self.config["PAGES_MARKDOWN_OPTIONS"] = self.config["MARKDOWN_OPTIONS"]
         self.config["COLLECTIONS_MARKDOWN_OPTIONS"] = self.config["MARKDOWN_OPTIONS"]
         self.config["MAIL_TEMPLATES_MARKDOWN_OPTIONS"] = self.config["MARKDOWN_OPTIONS"]
+        # error responses are not swapped (only out of band swaps are processed)
+        self.config["HTMX_CONFIG"] = {"noSwap": [204, 304, "4xx", "5xx"], **self.config["HTMX_CONFIG"]}
 
         if self.config['SERVER_SECURED']:
             self.config.update({
@@ -244,10 +246,11 @@ class Hyperflask(Flask):
         def on_suspense_before_render_template(sender, **kwargs):
             csp_nonce() # we will need a nonce but the first call will be after the template started rendering
 
-        @suspense_before_render_macros.connect_via(self, weak=False)
-        def on_suspense_before_render_macros(sender, **kwargs):
-            return ""
-            return f'<script nonce="{csp_nonce()}">htmx.bootstrap()</script>' # waiting on PR 3441
+        @suspense_after_render_macros.connect_via(self, weak=False)
+        def on_suspense_after_render_macros(sender, **kwargs):
+            # process the content inserted by suspense macros during htmx requests
+            # (during full page loads, htmx is not loaded yet and processes the whole page once loaded)
+            return f'<script nonce="{csp_nonce()}">window.htmx?.process(document.body)</script>'
 
         @self.errorhandler(404)
         def not_found(error):

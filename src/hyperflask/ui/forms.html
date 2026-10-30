@@ -11,8 +11,9 @@
 
 {% macro HxForm(form=None, action=None) -%}
     {% set inner = caller() %}
-    <{Form form hx_boost="false" hx_post=(action or request.url)
-           hx_on__after_request=("event.detail.successful && event.target.reset();" + kwargs.pop("hx_on__after_request", "")) **kwargs}>
+    {% set on_after_request = "ctx.response.status < 400 && event.target.reset();" + kwargs.pop("hx_on__after_request", "") + kwargs.pop("hx-on::after:request", "") %}
+    {% set _ = kwargs.update({"hx-on::after:request": on_after_request}) %}
+    <{Form form hx_boost="false" hx_post=(action or request.url) **kwargs}>
         {{inner}}
     </{Form}>
 {%- endmacro %}
