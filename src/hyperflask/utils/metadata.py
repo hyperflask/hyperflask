@@ -1,6 +1,7 @@
 from flask import current_app, json
 from flask_babel import get_locale
 from flask_configurator.config import deep_update_dict
+from jinja2.utils import htmlsafe_json_dumps
 from jinja_super_macros import html_tag
 from markupsafe import Markup, escape
 from babel import Locale, UnknownLocaleError
@@ -14,6 +15,8 @@ DEFAULT_METADATA = {
 
 LINK_METADATA = ["icon", "shortcut icon", "apple-touch-icon", "apple-touch-icon-precomposed",
                  "manifest", "canonical", "alternate", "archives", "assets", "bookmarks"]
+
+PROPERTY_METADATA_PREFIXES = ("og:", "fb:", "al:", "article:", "book:", "profile:")
 
 
 def metadata_tags(metadata=None, title_template=None, **kwargs):
@@ -96,6 +99,8 @@ def metadata_tag(name, value, metadata, force_link=False, is_url=None, key_separ
             v = _metadata_url(v, metadata)
         if is_link:
             yield html_tag("link", rel=name, href=v)
+        elif name.startswith(PROPERTY_METADATA_PREFIXES):
+            yield html_tag("meta", property=name, content=v)
         else:
             yield html_tag("meta", name=name, content=v)
 
@@ -108,12 +113,13 @@ def metadata_keywords(name, value, metadata):
 
 def metadata_author(name, value, metadata):
     if isinstance(value, (list, tuple)):
-        yield from (metadata_author(name, v, metadata) for v in value)
+        for v in value:
+            yield from metadata_author(name, v, metadata)
         return
     url = None
     if isinstance(value, dict):
-        value = value.get("name")
         url = value.get("url")
+        value = value.get("name")
     if url:
         yield html_tag("link", rel="author", href=_metadata_url(url, metadata))
     if value:
@@ -140,25 +146,22 @@ def metadata_robots(name, robots, metadata):
 
 
 def metadata_opengraph(name, value, metadata):
-    for key, value in value.items():
-        if key in ("image", "video") and isinstance(value, dict):
-            yield from metadata_tag(f"og:{key}", value["url"], metadata, is_url=True)
-            if "width" in value:
-                yield from metadata_tag(f"og:{key}:width", value["width"], metadata)
-            if "height" in value:
-                yield from metadata_tag(f"og:{key}:height", value["height"], metadata)
-            if "alt" in value:
-                yield from metadata_tag(f"og:{key}:alt", value["alt"], metadata)
-        elif key == "images" or key == "image" and isinstance(value, (list, tuple)):
-            yield from (metadata_opengraph(None, {"image": v}, metadata) for v in value)
-        elif key == "videos" or key == "video" and isinstance(value, (list, tuple)):
-            yield from (metadata_opengraph(None, {"video": v}, metadata) for v in value)
+    for key, val in value.items():
+        if key in ("images", "videos") or key in ("image", "video") and isinstance(val, (list, tuple)):
+            for v in val:
+                yield from metadata_opengraph(name, {key.rstrip("s"): v}, metadata)
+        elif key in ("image", "video") and isinstance(val, dict):
+            yield from metadata_tag(f"og:{key}", val["url"], metadata, is_url=True)
+            for prop in ("width", "height", "alt"):
+                if prop in val:
+                    yield from metadata_tag(f"og:{key}:{prop}", val[prop], metadata)
         else:
-            yield from metadata_tag(f"og:{key}", value, metadata, is_url=key in ("url", "audio"))
+            yield from metadata_tag(f"og:{key}", val, metadata,
+                                    is_url=key in ("url", "audio", "image", "video"))
 
 
 def metadata_twitter(name, value, metadata):
-    yield from metadata_tag(name, value, metadata, is_url=("image", "url", "card"))
+    yield from metadata_tag(name, value, metadata, is_url=("image", "url"))
 
 
 def metadata_theme_color(name, value, metadata):
@@ -172,11 +175,16 @@ def metadata_theme_color(name, value, metadata):
 
 def metadata_json_ld(name, value, metadata):
     if isinstance(value, (list, tuple)):
-        yield from (metadata_json_ld(name, v, metadata) for v in value)
+        for v in value:
+            yield from metadata_json_ld(name, v, metadata)
         return
-    if isinstance(value, dict):
-        value = json.dumps(value, indent=2)
-    return f"<script type=\"application/ld+json\">\n{value}\n</script>"
+    if isinstance(value, str):
+        # "</" can only appear inside JSON strings where "<\/" is equivalent
+        value = value.replace("</", "<\\/")
+    else:
+        # escapes <, >, & and ' so the content cannot close the script tag
+        value = htmlsafe_json_dumps(value, dumps=json.dumps, indent=2)
+    yield f"<script type=\"application/ld+json\">\n{value}\n</script>"
 
 
 def metadata_apple(name, value, metadata):
@@ -185,11 +193,11 @@ def metadata_apple(name, value, metadata):
         "touch-icon-precomposed",
         "touch-startup-image"
     )
-    yield from metadata_tag("apple-", value, metadata, force_link=force_link, key_separator="-")
+    yield from metadata_tag("apple", value, metadata, force_link=force_link, key_separator="-")
 
 
 def metadata_applinks(name, value, metadata):
-    yield from metadata_tag("al:", value, metadata)
+    yield from metadata_tag("al", value, metadata)
 
 
 def _metadata_url(url, metadata):
