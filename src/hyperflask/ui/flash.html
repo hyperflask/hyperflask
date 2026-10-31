@@ -7,11 +7,13 @@
 
 {% macro FlashMessage(category="info") -%}
   {%- set message = caller() -%}
-  <{Alert color=category class="flash-message" **kwargs }>{{message}}</{Alert}>
+  {#- errors interrupt screen readers, other messages are announced politely -#}
+  <{Alert color=category role=kwargs.pop('role', "alert" if category == "error" else "status") class="flash-message" **kwargs }>{{message}}</{Alert}>
 {%- endmacro %}
 
 {% macro FlashMessagesToast() -%}
-  <{Toast id="flash-messages-toast" class="z-1000"}>
+  {#- live region present from first paint so that messages inserted later are announced -#}
+  <{Toast id="flash-messages-toast" class="z-1000" role="status" aria_atomic="false"}>
     <{FlashMessages}/>
   </{Toast}>
 {%- endmacro %}

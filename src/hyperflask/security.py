@@ -13,9 +13,9 @@ def is_safe_redirect_url(target):
 
 
 def respond_with_security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+
     if current_app.config["CSP_HEADER"] is not False:
-        response.headers['X-XSS-Protection'] = '1; mode=block'
-        response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['Content-Security-Policy'] = generate_csp_policy()
 
     if current_app.config['HSTS_HEADER']:
@@ -29,7 +29,9 @@ def respond_with_security_headers(response):
 
 def generate_csp_policy():
     policy = current_app.config["CSP_HEADER"]
-    if policy is True:
+    if isinstance(policy, dict):
+        policy = dict(policy) # do not mutate the config across requests
+    elif policy is True:
         policy = {
             "default-src": "'safe-src'",
             "manifest-src": "'self'",
@@ -42,10 +44,8 @@ def generate_csp_policy():
     policy.setdefault("script-src", policy["default-src"])
     policy.setdefault("style-src", policy["default-src"])
 
-    if not current_app.config['CSP_FRAME_ANCESTORS']:
-        policy["frame-ancestors"] = "'none'"
-    elif isinstance(current_app.config['CSP_FRAME_ANCESTORS'], (list, tuple)):
-        frame_ancestors = list(current_app.config['CSP_FRAME_ANCESTORS'])
+    if current_app.config['CSP_FRAME_ANCESTORS'] is not True:
+        frame_ancestors = list(current_app.config['CSP_FRAME_ANCESTORS'] or [])
         add_frame_ancestors = True
         for endpoint in current_app.config['CSP_FRAME_ANCESTORS_SAFE_ENDPOINTS']:
             ancestors = []
@@ -58,7 +58,7 @@ def generate_csp_policy():
                     add_frame_ancestors = False
                 break
         if add_frame_ancestors:
-            policy["frame-ancestors"] = ' '.join(set(frame_ancestors))
+            policy["frame-ancestors"] = ' '.join(set(frame_ancestors)) or "'none'"
 
     if current_app.config.get('CSP_UNSAFE_EVAL'):
         policy["script-src"] += " 'unsafe-eval'"

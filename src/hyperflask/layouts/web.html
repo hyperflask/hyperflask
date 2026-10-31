@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{config.get("SITE_LANG", "en")}}" {% block html_tag_attrs %}{% endblock %}>
+<html lang="{{document_lang()}}"{% if document_dir() == "rtl" %} dir="rtl"{% endif %} {% block html_tag_attrs %}{% endblock %}>
     <head>
         {% block head -%}
         {% block head_metas %}

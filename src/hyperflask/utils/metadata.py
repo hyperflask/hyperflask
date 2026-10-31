@@ -1,7 +1,9 @@
 from flask import current_app, json
+from flask_babel import get_locale
 from flask_configurator.config import deep_update_dict
 from jinja_super_macros import html_tag
-from markupsafe import Markup
+from markupsafe import Markup, escape
+from babel import Locale, UnknownLocaleError
 import inspect
 
 
@@ -21,11 +23,16 @@ def metadata_tags(metadata=None, title_template=None, **kwargs):
     deep_update_dict(_metadata, kwargs)
     tags = []
 
+    # charset must be the first tag of the head, before the title
+    charset = _metadata.pop("charset", None)
+    if charset:
+        tags.append(html_tag("meta", charset=charset))
+
     if title_template is None:
         title_template = current_app.config.get('SITE_TITLE', None)
     title = generate_title(_metadata.pop("title", None), title_template)
     if title:
-        tags.append(f"<title>{title}</title>")
+        tags.append(f"<title>{escape(title)}</title>")
 
     for name, value in _metadata.items():
         if name.startswith("_"):
@@ -40,6 +47,23 @@ def metadata_tags(metadata=None, title_template=None, **kwargs):
             tags.append(rv)
 
     return Markup("\n".join(tags))
+
+
+def document_lang():
+    """Returns the BCP 47 language tag of the current document"""
+    lang = current_app.config.get("SITE_LANG")
+    if lang:
+        return lang.replace("_", "-")
+    locale = get_locale()
+    return str(locale).replace("_", "-") if locale else "en"
+
+
+def document_dir():
+    """Returns the text direction (ltr or rtl) of the current document"""
+    try:
+        return Locale.parse(document_lang(), sep="-").text_direction
+    except (ValueError, UnknownLocaleError):
+        return "ltr"
 
 
 def generate_title(title, title_template=None):
@@ -137,6 +161,15 @@ def metadata_twitter(name, value, metadata):
     yield from metadata_tag(name, value, metadata, is_url=("image", "url", "card"))
 
 
+def metadata_theme_color(name, value, metadata):
+    if not isinstance(value, dict):
+        return html_tag("meta", name=name, content=value)
+    # keys are color schemes (light, dark) or media queries
+    return [html_tag("meta", name=name, content=color,
+                     media=f"(prefers-color-scheme: {media})" if media in ("light", "dark") else media)
+            for media, color in value.items()]
+
+
 def metadata_json_ld(name, value, metadata):
     if isinstance(value, (list, tuple)):
         yield from (metadata_json_ld(name, v, metadata) for v in value)
@@ -178,5 +211,6 @@ METADATA_GENERATORS = {
     "twitter": metadata_twitter,
     "apple": metadata_apple,
     "applinks": metadata_applinks,
+    "theme-color": metadata_theme_color,
     "json-ld": metadata_json_ld
 }

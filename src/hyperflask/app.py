@@ -29,7 +29,7 @@ from .utils.page_actions import page_action_url
 from .utils.htmx import htmx_oob, respond_with_flash_messages
 from .utils.markdown import jinja_markdown, MarkdownExtension
 from .utils.html import sanitize_html, nl2br
-from .utils.metadata import metadata_tags
+from .utils.metadata import metadata_tags, document_lang, document_dir
 from .utils.freezer import StaticMode, Freezer, freezer_url_generator
 from .utils.image import image_tag
 from .components import register_components
@@ -93,7 +93,7 @@ class Hyperflask(Flask):
             "CSP_SAFE_SRC": ["'self'"],
             "CSP_UNSAFE_EVAL": True,
             "CSP_UNSAFE_INLINE": True,
-            "CSP_FRAME_ANCESTORS": True,
+            "CSP_FRAME_ANCESTORS": False,
             "CSP_FRAME_ANCESTORS_SAFE_ENDPOINTS": [],
             "REFERRER_POLICY": "strict-origin-when-cross-origin",
             "HSTS_HEADER": False,
@@ -138,7 +138,9 @@ class Hyperflask(Flask):
         self.jinja_env.globals.update(page_action_url=page_action_url,
                                       app=self,
                                       csp_nonce=csp_nonce,
-                                      metadata_tags=metadata_tags)
+                                      metadata_tags=metadata_tags,
+                                      document_lang=document_lang,
+                                      document_dir=document_dir)
         self.jinja_env.form_base_cls = Form
         self.jinja_env.default_layout = self.config["LAYOUT"]
         self.forms = self.jinja_env.forms
