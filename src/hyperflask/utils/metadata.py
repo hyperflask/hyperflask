@@ -2,7 +2,7 @@ from flask import current_app, json
 from flask_babel import get_locale
 from flask_configurator.config import deep_update_dict
 from jinja2.utils import htmlsafe_json_dumps
-from jinja_super_macros import html_tag
+from jinja_super_macros import html_tag as _html_tag
 from markupsafe import Markup, escape
 from babel import Locale, UnknownLocaleError
 import inspect
@@ -17,6 +17,12 @@ LINK_METADATA = ["icon", "shortcut icon", "apple-touch-icon", "apple-touch-icon-
                  "manifest", "canonical", "alternate", "archives", "assets", "bookmarks"]
 
 PROPERTY_METADATA_PREFIXES = ("og:", "fb:", "al:", "article:", "book:", "profile:")
+
+
+def html_tag(tagname, **attrs):
+    # jinja-super-macros 0.2.0 does not escape attribute values (escaped values are Markup,
+    # so they are not escaped twice by versions that do)
+    return _html_tag(tagname, **{k: escape(v) for k, v in attrs.items() if v is not None})
 
 
 def metadata_tags(metadata=None, title_template=None, **kwargs):
